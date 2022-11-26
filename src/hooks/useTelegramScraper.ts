@@ -27,7 +27,7 @@ export type TelegramAPIResponse = z.infer<typeof responseValidator>;
 
 export const useTelegramScraper = () => {
   return useQuery(
-    ["whastapp-scraper-query"],
+    ["telegram-scraper-query"],
     async () => {
       const res = await (await fetch(`/api/telegram/`)).json();
 

@@ -1,15 +1,34 @@
 import { useState } from 'react'
+import React from 'react'
+import { Fragment } from "react";
+
 import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 import { type NextPage } from "next";
 import Image from 'next/image'
-
 import Head from "next/head";
 
-import { Fragment } from "react";
+
+import Select from 'react-select'
+import type { GroupBase, Props, Options } from 'react-select';
+import makeAnimated from 'react-select/animated';
+
 import { useWhatsappScraper } from "../hooks/useWhatsappScraper";
 import { useTelegramScraper } from "../hooks/useTelegramScraper";
+
+
+type Option = {value: string, label: string}
+
+function CustomSelect<
+  Option,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>
+>(props: Props<Option, IsMulti, Group>) {
+  return (
+    <Select {...props} theme={(theme) => ({ ...theme })} />
+  );
+}
 
 const Home: NextPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -18,6 +37,16 @@ const Home: NextPage = () => {
   const telegramData = useTelegramScraper();
 
   const [showModal, setShowModal] = useState(false);
+
+  const animatedComponents = makeAnimated();
+  const options: Options<Option> = [
+    { value: 'whatsapp', label: 'Whatsapp' },
+    { value: 'telegram', label: 'Telegram' },
+    // add more options here
+  ]
+
+  // Select scrapers
+  const [selected, setSelected] = useState<Option[]>([]);
 
   return (
     <Fragment>
@@ -103,7 +132,7 @@ const Home: NextPage = () => {
           <div
             className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
           >
-            <div className="relative w-auto my-6 mx-auto max-w-3xl">
+            <div className="relative max-w-3xl w-4/6">
               {/*content*/}
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                 {/*header*/}
@@ -118,47 +147,56 @@ const Home: NextPage = () => {
                   </button>
                 </div>
                 {/*body*/}
-                <div className="relative p-3 flex-auto">
-                <form action="/send-data-here" method="post">
-                  <div className="flex flex-col p-4">
-                    <label>Numero di telefono <span className="text-red-600">*</span></label>
-                    <input
-                      className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"                    
-                      type="text"
-                      id="phone"
-                      name="phone"
-                      placeholder="+39 3333333333"
-                      required
-                    />
+                <form action="/api/scrapers" method="POST">
+                  <div className="relative p-3 flex-auto">
+                    <div className="flex flex-col p-4">
+                      <label>Scegli gli scrapers <span className="text-red-600">*</span></label>
+                      <CustomSelect 
+                        isMulti
+                        components={animatedComponents} 
+                        options={options}
+                        onChange={() => {setSelected(selected)}}
+                        name="scrapers"
+                      />
+                    </div>
+                    <div className="flex flex-col p-4">
+                      <label>Numero di telefono <span className="text-red-600">*</span></label>
+                      <input
+                        className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"                    
+                        type="text"
+                        id="phone"
+                        name="phone"
+                        placeholder="+39 3333333333"
+                        required
+                      />
+                    </div>
+                    <div className="flex flex-col p-4">
+                      <label>Lista contatti (opzionale)</label>
+                      <input
+                        className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"                     
+                        type="text"
+                        id="contacts"
+                        name="contacts"
+                        placeholder="Mario,Sara,+393333333333" />
+                    </div>
                   </div>
-                  <div className="flex flex-col p-4">
-                    <label>Lista contatti (opzionale)</label>
-                    <input
-                      className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"                     
-                      type="text"
-                      id="contacts"
-                      name="contacts"
-                      placeholder="Mario,Sara,+393333333333" />
-                  </div>
+                  <div className="flex items-center justify-end p-3 border-t border-solid border-slate-200 rounded-b">
+                    <button
+                      className="mx-3 inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
+                      type="button"
+                      onClick={() => setShowModal(false)}
+                    >
+                      Chiudi
+                    </button>                  
+                    <button
+                      className="inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-white bg-gray-800 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
+                      type="submit"
+                      // onClick={() => setShowModal(false)}
+                    >
+                      Avvia
+                    </button>
+                  </div>                  
                 </form>
-                </div>
-                {/*footer*/}
-                <div className="flex items-center justify-end p-3 border-t border-solid border-slate-200 rounded-b">
-                  <button
-                    className="mx-3 inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Chiudi
-                  </button>                  
-                  <button
-                    className="inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-white bg-gray-800 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Avvia
-                  </button>
-                </div>
               </div>
             </div>
           </div>
@@ -173,7 +211,7 @@ const Home: NextPage = () => {
               <div className="flex h-9 items-center justify-between">
                 <div className="flex">
                   <a href="#" className="-m-1.5 p-1.5">
-                    <span className="sr-only">Your Company</span>
+                    <span className="sr-only">Scrapers</span>
                     <Image
                       className="h-8"
                       src="/logo.svg"
@@ -194,7 +232,7 @@ const Home: NextPage = () => {
                   </button>
                 </div>
               </div>
-              <div className="mt-6 flow-root">
+              {/* <div className="mt-6 flow-root">
                 <div className="-my-6 divide-y divide-gray-500/10">
                   <div className="space-y-2 py-6">
                     {[{href:"home",name:"home"}].map((item) => (
@@ -216,7 +254,7 @@ const Home: NextPage = () => {
                     </a>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </Dialog.Panel>
           </Dialog>
         </div>
