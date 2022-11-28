@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import React from "react";
 import { Fragment } from "react";
 
@@ -10,7 +10,14 @@ import Select from "react-select";
 import type { Options } from "react-select";
 import makeAnimated from "react-select/animated";
 
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 
 type Option = { value: Scrapers; label: string };
 
@@ -19,12 +26,119 @@ enum Scrapers {
   TELEGRAM = "telegram",
 }
 
+// Modal
 type FormInput = { scrapers?: Scrapers[]; phone?: string; contacts?: string };
 
+// Modal submit
 const LINKS = {
   [Scrapers.WHATSAPP]: `/api/whatsapp/`,
   [Scrapers.TELEGRAM]: `/api/telegram/`,
 };
+
+// API Response
+type Mention = {
+  id: string;
+  author: string;
+  message: string;
+};
+
+type Message = {
+  athor: string;
+  message: string;
+  date: string;
+  day: string;
+  hours: string;
+  mention: Mention;
+};
+
+type Chat = {
+  id: string;
+  contact: string;
+  messages: Message[];
+};
+
+type Chats = {
+  conversations: Chat[];
+  scraper: Scrapers;
+};
+
+// Table
+type ScraperRow = {
+  idConversazione: string; // Valore identificiativo sequenziiale
+  contatto: string; // Tizio con cui si sta parlando (o gruppo)
+  idMessaggio: string; // Valore identificiativo sequenziiale
+  mittente: string; // Chi scrive il messaggio
+  testo: string; // Testo del messaggio
+  data: string; // Data del messaggio
+  ora: string; // Ora del messaggio
+  idMessaggioCitato: string; // Se esiste è il messaggio a cui ci si riferisce
+  testoCitato: string; // Testo del messaggio citato
+  mittenteCitato: string; // Chi scrive il messaggio
+  scraper: string; // Tipologia di scraper
+};
+const defaultData: ScraperRow[] = [
+  {
+    idConversazione: "Empty",
+    contatto: "",
+    idMessaggio: "",
+    mittente: "",
+    testo: "",
+    data: "",
+    ora: "",
+    idMessaggioCitato: "",
+    testoCitato: "",
+    mittenteCitato: "",
+    scraper: "",
+  },
+];
+const columnHelper = createColumnHelper<ScraperRow>();
+const columns = [
+  columnHelper.accessor("idConversazione", {
+    cell: (info) => info.getValue(),
+    footer: (info) => info.column.id,
+  }),
+  columnHelper.accessor("contatto", {
+    cell: (info) => info.getValue(),
+    footer: (info) => info.column.id,
+  }),
+  columnHelper.accessor("idMessaggio", {
+    cell: (info) => info.getValue(),
+    footer: (info) => info.column.id,
+  }),
+  columnHelper.accessor("mittente", {
+    cell: (info) => info.getValue(),
+    footer: (info) => info.column.id,
+  }),
+  columnHelper.accessor("testo", {
+    cell: (info) => info.getValue(),
+    footer: (info) => info.column.id,
+  }),
+  columnHelper.accessor("data", {
+    cell: (info) => info.getValue(),
+    footer: (info) => info.column.id,
+  }),
+  columnHelper.accessor("ora", {
+    cell: (info) => info.getValue(),
+    footer: (info) => info.column.id,
+  }),
+  columnHelper.accessor("idMessaggioCitato", {
+    cell: (info) => info.getValue(),
+    footer: (info) => info.column.id,
+  }),
+  columnHelper.accessor("testoCitato", {
+    cell: (info) => info.getValue(),
+    footer: (info) => info.column.id,
+  }),
+  columnHelper.accessor("mittenteCitato", {
+    cell: (info) => info.getValue(),
+    footer: (info) => info.column.id,
+  }),
+  columnHelper.accessor("scraper", {
+    cell: (info) => info.getValue(),
+    footer: (info) => info.column.id,
+  }),
+];
+
 const Home: NextPage = () => {
   const [showModal, setShowModal] = useState(false);
 
@@ -41,11 +155,50 @@ const Home: NextPage = () => {
       {
         scrapers.forEach(async (scraper) => {
           const response = await (await fetch(LINKS[scraper])).json();
-          console.log(response);
+          console.log("response FROM " + scraper);
+          // console.log(response);
+
+          let datasToRender: ScraperRow[];
+
+          response.conversazioni.forEach(
+            (conversazione: Chat, indexC: number) => {
+              conversazione.messages.forEach(
+                (messaggio: Message, indexM: number) => {
+                  console.log(messaggio);
+
+                  datasToRender.push({
+                    idConversazione: indexC.toString(),
+                    contatto: conversazione.contact,
+                    idMessaggio: indexM.toString(),
+                    mittente: messaggio.athor,
+                    testo: messaggio.message,
+                    data: messaggio.date,
+                    ora: messaggio.hours,
+                    idMessaggioCitato: "0",
+                    testoCitato: "",
+                    mittenteCitato: "",
+                    scraper: scraper,
+                  });
+                }
+              );
+              setData(datasToRender);
+            }
+          );
+
+          setShowModal(false);
         });
       }
     }
   };
+
+  const [data, setData] = useState(() => [...defaultData]);
+  const rerender = useReducer(() => ({}), {})[1];
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   return (
     <Fragment>
@@ -231,7 +384,7 @@ const Home: NextPage = () => {
         </div>
         <main>
           <div className="relative px-6 lg:px-8">
-            <div className="mx-auto max-w-3xl pt-20 pb-32 sm:pt-48 sm:pb-40">
+            <div className="mx-auto max-w-5xl pt-20 pb-32 sm:pt-48 sm:pb-40">
               <div>
                 {/* <div className="hidden sm:mb-8 sm:flex sm:justify-center">
                 <div className="relative overflow-hidden rounded-full py-1.5 px-4 text-sm leading-6 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
@@ -245,39 +398,75 @@ const Home: NextPage = () => {
                 </div>
               </div> */}
                 <div>
-                  <h1 className="text-4xl font-bold tracking-tight sm:text-center sm:text-6xl">
+                  <h4 className="text-xl font-bold tracking-tight sm:text-center sm:text-xl">
                     Export your chats from this tool!
-                  </h1>
+                  </h4>
                   <p className="mt-6 text-lg leading-8 text-gray-600 sm:text-center">
                     {/* {JSON.stringify(telegramData.data)} */}
                   </p>
                   <p className="mt-6 text-lg leading-8 text-gray-600 sm:text-center">
                     {/* {JSON.stringify(whatsappData.data)} */}
                   </p>
-                  <table className="... border-collapse border border-slate-400">
-                    <thead>
-                      <tr>
-                        <th className="... border border-slate-300">State</th>
-                        <th className="... border border-slate-300">City</th>
-                        <th className="... border border-slate-300">Address</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[...Array(10)].map((x, i) => (
-                        <tr key={i}>
-                          <td className="... border border-slate-300">
-                            State {i}
-                          </td>
-                          <td className="... border border-slate-300">
-                            City {i}
-                          </td>
-                          <td className="... border border-slate-300">
-                            Address {i}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+
+                  <div className="overflow-auto">
+                    <table className="border-collapse border border-slate-400">
+                      <thead>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                          <tr key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => (
+                              <th
+                                className="border border-slate-300 p-1"
+                                key={header.id}
+                              >
+                                {header.isPlaceholder
+                                  ? null
+                                  : flexRender(
+                                      header.column.columnDef.header,
+                                      header.getContext()
+                                    )}
+                              </th>
+                            ))}
+                          </tr>
+                        ))}
+                      </thead>
+                      <tbody>
+                        {table.getRowModel().rows.map((row) => (
+                          <tr key={row.id}>
+                            {row.getVisibleCells().map((cell) => (
+                              <td
+                                className="border border-slate-300 p-1"
+                                key={cell.id}
+                              >
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        {table.getFooterGroups().map((footerGroup) => (
+                          <tr key={footerGroup.id}>
+                            {footerGroup.headers.map((header) => (
+                              <th
+                                className="border border-slate-300 p-1"
+                                key={header.id}
+                              >
+                                {header.isPlaceholder
+                                  ? null
+                                  : flexRender(
+                                      header.column.columnDef.footer,
+                                      header.getContext()
+                                    )}
+                              </th>
+                            ))}
+                          </tr>
+                        ))}
+                      </tfoot>
+                    </table>
+                  </div>
                   {/* <div className="mt-8 flex gap-x-4 sm:justify-center">
                   <a
                     href="#"
