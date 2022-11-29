@@ -76,21 +76,7 @@ type ScraperRow = {
   mittenteCitato: string; // Chi scrive il messaggio
   scraper: string; // Tipologia di scraper
 };
-const defaultData: ScraperRow[] = [
-  {
-    idConversazione: "Empty",
-    contatto: "",
-    idMessaggio: "",
-    mittente: "",
-    testo: "",
-    data: "",
-    ora: "",
-    idMessaggioCitato: "",
-    testoCitato: "",
-    mittenteCitato: "",
-    scraper: "",
-  },
-];
+const defaultData: ScraperRow[] = [];
 const columnHelper = createColumnHelper<ScraperRow>();
 const columns = [
   columnHelper.accessor("idConversazione", {
@@ -153,27 +139,23 @@ const Home: NextPage = () => {
   const onSubmit: SubmitHandler<FormInput> = ({ scrapers }) => {
     if (scrapers) {
       {
+        const datasToRender: ScraperRow[] = [];
+        setData(datasToRender);
         scrapers.forEach(async (scraper) => {
           const response = await (await fetch(LINKS[scraper])).json();
-          console.log("response FROM " + scraper);
-          // console.log(response);
 
-          let datasToRender: ScraperRow[];
-
-          response.conversazioni.forEach(
-            (conversazione: Chat, indexC: number) => {
-              conversazione.messages.forEach(
-                (messaggio: Message, indexM: number) => {
-                  console.log(messaggio);
-
+          response.conversations.forEach(
+            (conversations: Chat, indexC: number) => {
+              conversations.messages.forEach(
+                (message: Message, indexM: number) => {
                   datasToRender.push({
                     idConversazione: indexC.toString(),
-                    contatto: conversazione.contact,
+                    contatto: conversations.contact,
                     idMessaggio: indexM.toString(),
-                    mittente: messaggio.athor,
-                    testo: messaggio.message,
-                    data: messaggio.date,
-                    ora: messaggio.hours,
+                    mittente: message.athor,
+                    testo: message.message,
+                    data: message.date,
+                    ora: message.hours,
                     idMessaggioCitato: "0",
                     testoCitato: "",
                     mittenteCitato: "",
@@ -181,9 +163,9 @@ const Home: NextPage = () => {
                   });
                 }
               );
-              setData(datasToRender);
             }
           );
+          setData(data.concat(datasToRender));
 
           setShowModal(false);
         });
@@ -384,7 +366,7 @@ const Home: NextPage = () => {
         </div>
         <main>
           <div className="relative px-6 lg:px-8">
-            <div className="mx-auto max-w-5xl pt-20 pb-32 sm:pt-48 sm:pb-40">
+            <div className="mx-auto max-w-7xl pt-20 pb-32 sm:pt-48 sm:pb-40">
               <div>
                 {/* <div className="hidden sm:mb-8 sm:flex sm:justify-center">
                 <div className="relative overflow-hidden rounded-full py-1.5 px-4 text-sm leading-6 ring-1 ring-gray-900/10 hover:ring-gray-900/20">

@@ -7,90 +7,90 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   } else {
     // Handle any other HTTP method
     res.status(200).json({
-      conversazioni: [
+      conversations: [
         {
-          contatto: "Pluto",
-          messaggi: [
+          contact: "Pluto",
+          messages: [
             {
-              autore: "Pippo",
-              testo: "Ciao, come va?",
-              data: "1669413188",
+              athor: "3802863702",
+              message: "Ciao, come va?",
+              date: "1669413188",
               giorno: "24/11/2022",
-              ora: "10:30",
-              messaggioCitato: {
-                messaggio: "",
-                autore: "",
+              hours: "10:30",
+              mention: {
+                message: "",
+                athor: "",
               },
             },
             {
-              autore: "Pluto",
-              testo: "Ehi tutto bene, tu come stai?",
-              data: "1669413289",
+              athor: "Pluto",
+              message: "Ehi tutto bene, tu come stai?",
+              date: "1669413289",
               giorno: "24/11/2022",
-              ora: "10:45",
-              messaggioCitato: {
-                messaggio: "Ciao, come va?",
-                autore: "Pippo",
+              hours: "10:45",
+              mention: {
+                message: "Ciao, come va?",
+                athor: "3802863702",
               },
             },
             {
-              autore: "Pippo",
-              testo: "Bene, ti va di uscire oggi?",
-              data: "1669413390",
+              athor: "3802863702",
+              message: "Bene, ti va di uscire oggi?",
+              date: "1669413390",
               giorno: "24/11/2022",
-              ora: "10:55",
-              messaggioCitato: {
-                messaggio: "",
-                autore: "",
+              hours: "10:55",
+              mention: {
+                message: "",
+                athor: "",
               },
             },
             {
-              autore: "Pluto",
-              testo: "Sisi, ci vediamo alle 18:00 in piazza",
-              data: "1669414001",
+              athor: "Pluto",
+              message: "Sisi, ci vediamo alle 18:00 in piazza",
+              date: "1669414001",
               giorno: "24/11/2022",
-              ora: "10:59",
-              messaggioCitato: {
-                messaggio: "",
-                autore: "",
+              hours: "10:59",
+              mention: {
+                message: "",
+                athor: "",
               },
             },
           ],
         },
         {
-          contatto: "Topolino",
-          messaggi: [
+          contact: "Topolino",
+          messages: [
             {
-              autore: "Pippo",
-              testo: "Ciao, come va?",
-              data: "1669413188",
+              athor: "3802863702",
+              message: "Ciao, come va?",
+              date: "1669413188",
               giorno: "24/11/2022",
-              ora: "10:30",
-              messaggioCitato: {
-                messaggio: "",
-                autore: "",
+              hours: "10:30",
+              mention: {
+                message: "",
+                athor: "",
               },
             },
             {
-              autore: "Topolino",
-              testo: "Ehi tutto bene, tu come stai?",
-              data: "1669413289",
+              athor: "Topolino",
+              message: "Ehi tutto bene, tu come stai?",
+              date: "1669413289",
               giorno: "24/11/2022",
-              ora: "10:45",
-              messaggioCitato: {
-                messaggio: "Ciao, come va?",
-                autore: "Pippo",
+              hours: "10:45",
+              mention: {
+                message: "Ciao, come va?",
+                athor: "3802863702",
               },
             },
             {
-              autore: "Pippo",
-              testo: "Bene",
-              data: "1669413390",
+              athor: "3802863702",
+              message: "Bene",
+              date: "1669413390",
               giorno: "24/11/2022",
-              ora: "10:55",
-              messaggioCitato: {
-                messaggio: "",
-                autore: "",
+              hours: "10:55",
+              mention: {
+                message: "",
+                athor: "",
               },
             },
           ],
