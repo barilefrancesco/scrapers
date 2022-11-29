@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from "next";
 
 //api get handler nextjs
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -7,19 +7,19 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   } else {
     // Handle any other HTTP method
     res.status(200).json({
-      conversazioni: [
+      conversations: [
         {
-          contatto: "michele",
-          messaggi: [
+          contact: "Paperino",
+          messages: [
             {
-              autore: "asdfasdasdas",
-              testo: "dasdasdas",
-              data: "12321323213213TS",
-              giorno: "10/12/98",
-              ora: "dateTime",
-              messaggioCitato: {
-                messaggio: "",
-                autore: "",
+              athor: "3802863702",
+              message: "Ciao, come stai?",
+              date: "12321323213213TS",
+              day: "10/12/2022",
+              hours: "10:30",
+              mention: {
+                author: "",
+                message: "",
               },
             },
           ],
