@@ -15,7 +15,7 @@ function DownloadCsvButton({ data }: { data: ScraperRow[] }) {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", "data.csv");
+    link.setAttribute("download", "data-" + Date.now() + ".csv");
     link.click();
   };
 
