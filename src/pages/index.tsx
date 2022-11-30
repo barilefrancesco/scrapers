@@ -6,15 +6,10 @@ import { type NextPage } from "next";
 import Image from "next/image";
 import Head from "next/head";
 
-import Select from "react-select";
-import type { Options } from "react-select";
-import makeAnimated from "react-select/animated";
-
-import type { SubmitHandler } from "react-hook-form";
-import { useForm, Controller } from "react-hook-form";
-import { Scrapers, ScraperRow, FormInput, Option, Chats } from "../types";
+import { ScraperRow } from "../types";
 import MessagesTable from "../components/messages-table";
 import ExtractButton from "../components/extract-button";
+import ImportCsvButton from "../components/import-csv-button";
 
 const Home: NextPage = () => {
   const [data, setData] = useState<ScraperRow[]>([]);
@@ -68,7 +63,7 @@ const Home: NextPage = () => {
         </div>
         <main>
           <div className="relative px-6 lg:px-8">
-            <div className="mx-auto max-w-7xl pt-20 pb-32 sm:pt-48 sm:pb-40">
+            <div className="mx-auto max-w-7xl pt-6 pb-32">
               <div>
                 <div>
                   <h4 className="text-xl font-bold tracking-tight sm:text-center sm:text-xl">
@@ -81,10 +76,15 @@ const Home: NextPage = () => {
                     {/* {JSON.stringify(whatsappData.data)} */}
                   </p>
                   {data.length == 0 ? (
-                    <div className="flex flex-col justify-center text-center gap-2">
+                    <div className="flex flex-col justify-center gap-2 text-center">
                       <p>No data available. Let's extract some messages!</p>{" "}
-                      <div className="mx-auto">
-                        <ExtractButton setData={setData} />
+                      <div className="mx-auto flex">
+                        <div className="mx-1">
+                          <ExtractButton setData={setData} />
+                        </div>
+                        <div className="mx-1">
+                          <ImportCsvButton />
+                        </div>
                       </div>
                     </div>
                   ) : (
