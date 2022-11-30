@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Options } from "react-select";
 import Select from "react-select";
@@ -22,7 +22,7 @@ const animatedComponents = makeAnimated();
 const ExtractButton = ({
   setData,
 }: {
-  setData:React.Dispatch<React.SetStateAction<ScraperRow[]>>
+  setData: React.Dispatch<React.SetStateAction<ScraperRow[]>>;
 }) => {
   const [showModal, setShowModal] = useState(false);
 
@@ -52,7 +52,7 @@ const ExtractButton = ({
               });
             });
           });
-          setData((data)=>data.concat(datasToRender));
+          setData((data) => data.concat(datasToRender));
 
           setShowModal(false);
         });
