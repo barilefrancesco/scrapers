@@ -27,6 +27,7 @@ import {
 } from "@tanstack/match-sorter-utils";
 import { ScraperRow } from "../../types";
 import DownloadCsvButton from "../download-csv-button";
+import ImportCsvButton from "../import-csv-button";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -65,7 +66,13 @@ const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
   return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
 };
 
-function MessagesTable({ data }: { data: ScraperRow[] }) {
+function MessagesTable({
+  data,
+  setData,
+}: {
+  data: ScraperRow[];
+  setData: React.Dispatch<React.SetStateAction<ScraperRow[]>>;
+}) {
   const rerender = React.useReducer(() => ({}), {})[1];
 
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -180,145 +187,158 @@ function MessagesTable({ data }: { data: ScraperRow[] }) {
   }, [table.getState().columnFilters[0]?.id]);
 
   return (
-    <div className="p-2">
-      <div>
-        <DebouncedInput
-          value={globalFilter ?? ""}
-          onChange={(value) => setGlobalFilter(String(value))}
-          className="font-lg border-block border p-2 shadow"
-          placeholder="Search all columns..."
-        />
-      </div>
-      <div className="h-2" />
-      <div className="overflow-auto">
-        <table className="border-collapse border border-slate-400">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <th
-                      className="border border-slate-300 p-1"
-                      key={header.id}
-                      colSpan={header.colSpan}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <>
-                          <div
-                            {...{
-                              className: header.column.getCanSort()
-                                ? "cursor-pointer select-none"
-                                : "",
-                              onClick: header.column.getToggleSortingHandler(),
-                            }}
-                          >
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                            {{
-                              asc: " 🔼",
-                              desc: " 🔽",
-                            }[header.column.getIsSorted() as string] ?? null}
-                          </div>
-                          {header.column.getCanFilter() ? (
-                            <div>
-                              <Filter column={header.column} table={table} />
-                            </div>
-                          ) : null}
-                        </>
-                      )}
-                    </th>
-                  );
-                })}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => {
-              return (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => {
+    <div>
+      <div className="p-2">
+        <div>
+          <DebouncedInput
+            value={globalFilter ?? ""}
+            onChange={(value) => setGlobalFilter(String(value))}
+            className="font-lg border-block border p-2 shadow"
+            placeholder="Search all columns..."
+          />
+        </div>
+        <div className="h-2" />
+        <div className="overflow-auto">
+          <table className="border-collapse border border-slate-400">
+            <thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
                     return (
-                      <td className="border border-slate-300 p-1" key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
+                      <th
+                        className="border border-slate-300 p-1"
+                        key={header.id}
+                        colSpan={header.colSpan}
+                      >
+                        {header.isPlaceholder ? null : (
+                          <>
+                            <div
+                              {...{
+                                className: header.column.getCanSort()
+                                  ? "cursor-pointer select-none"
+                                  : "",
+                                onClick:
+                                  header.column.getToggleSortingHandler(),
+                              }}
+                            >
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                              {{
+                                asc: " 🔼",
+                                desc: " 🔽",
+                              }[header.column.getIsSorted() as string] ?? null}
+                            </div>
+                            {header.column.getCanFilter() ? (
+                              <div>
+                                <Filter column={header.column} table={table} />
+                              </div>
+                            ) : null}
+                          </>
                         )}
-                      </td>
+                      </th>
                     );
                   })}
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-      <div className="h-2" />
-      <div className="flex items-center gap-2">
-        <button
-          className="rounded border p-1"
-          onClick={() => table.setPageIndex(0)}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {"<<"}
-        </button>
-        <button
-          className="rounded border p-1"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {"<"}
-        </button>
-        <button
-          className="rounded border p-1"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          {">"}
-        </button>
-        <button
-          className="rounded border p-1"
-          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-          disabled={!table.getCanNextPage()}
-        >
-          {">>"}
-        </button>
-        <span className="flex items-center gap-1">
-          <div>Page</div>
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </strong>
-        </span>
-        <span className="flex items-center gap-1">
-          | Go to page:
-          <input
-            type="number"
-            defaultValue={table.getState().pagination.pageIndex + 1}
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => {
+                return (
+                  <tr key={row.id}>
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <td
+                          className="border border-slate-300 p-1"
+                          key={cell.id}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2 overflow-auto">
+          <button
+            className="rounded border p-1"
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {"<<"}
+          </button>
+          <button
+            className="rounded border p-1"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {"<"}
+          </button>
+          <button
+            className="rounded border p-1"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            {">"}
+          </button>
+          <button
+            className="rounded border p-1"
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+          >
+            {">>"}
+          </button>
+          <span className="flex items-center gap-1">
+            <div>Page</div>
+            <strong>
+              {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getPageCount()}
+            </strong>
+          </span>
+          <span className="flex items-center gap-1">
+            | Go to page:
+            <input
+              type="number"
+              defaultValue={table.getState().pagination.pageIndex + 1}
+              onChange={(e) => {
+                const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                table.setPageIndex(page);
+              }}
+              className="w-16 rounded border p-1"
+            />
+          </span>
+          <select
+            className="inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
+            value={table.getState().pagination.pageSize}
             onChange={(e) => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0;
-              table.setPageIndex(page);
+              table.setPageSize(Number(e.target.value));
             }}
-            className="w-16 rounded border p-1"
-          />
-        </span>
-        <select
-          className="inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
-          value={table.getState().pagination.pageSize}
-          onChange={(e) => {
-            table.setPageSize(Number(e.target.value));
-          }}
-        >
-          {[10, 20, 30, 40, 50].map((pageSize) => (
-            <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </select>
-        <DownloadCsvButton data={data} />
+          >
+            {[10, 20, 30, 40, 50].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>{table.getPrePaginationRowModel().rows.length} Rows</div>
       </div>
-      <div>{table.getPrePaginationRowModel().rows.length} Rows</div>
+      <div className="mx-auto flex justify-center">
+        <div className="mx-1">
+          <DownloadCsvButton data={data} />
+        </div>
+        <div className="mx-1">
+          <ImportCsvButton setData={setData} />
+        </div>
+      </div>
     </div>
   );
 }

@@ -67,7 +67,7 @@ const ExtractButton = ({
         className="inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
         onClick={() => setShowModal(true)}
       >
-        Estrai
+        Extract
       </button>
       {showModal ? (
         <Portal node={document && document.body}>
@@ -77,7 +77,7 @@ const ExtractButton = ({
               <div className="relative flex w-full flex-col rounded-lg border-0 bg-white shadow-lg outline-none focus:outline-none">
                 {/*header*/}
                 <div className="flex items-start justify-between rounded-t border-b border-solid border-slate-200 p-3">
-                  <h3 className="text-lg font-semibold">Estrai i tuoi dati</h3>
+                  <h3 className="text-lg font-semibold">Extract your data</h3>
                   <button
                     className="float-right ml-auto border-0 bg-transparent p-1 text-3xl font-semibold leading-none text-black opacity-5 outline-none focus:outline-none"
                     onClick={() => setShowModal(false)}
@@ -88,8 +88,7 @@ const ExtractButton = ({
                   <div className="relative flex-auto p-3">
                     <div className="flex flex-col p-4">
                       <label>
-                        Scegli gli scrapers{" "}
-                        <span className="text-red-600">*</span>
+                        Choose scrapers <span className="text-red-600">*</span>
                       </label>
                       <Controller
                         name="scrapers"
@@ -113,8 +112,7 @@ const ExtractButton = ({
                     </div>
                     <div className="flex flex-col p-4">
                       <label>
-                        Numero di telefono{" "}
-                        <span className="text-red-600">*</span>
+                        Phone number <span className="text-red-600">*</span>
                       </label>
                       <input
                         className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
@@ -124,7 +122,7 @@ const ExtractButton = ({
                       />
                     </div>
                     <div className="flex flex-col p-4">
-                      <label>Lista contatti (opzionale)</label>
+                      <label>Contacts list (optional)</label>
                       <input
                         className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
                         type="text"
@@ -139,14 +137,14 @@ const ExtractButton = ({
                       type="button"
                       onClick={() => setShowModal(false)}
                     >
-                      Chiudi
+                      Close
                     </button>
                     <button
                       className="inline-block rounded-lg bg-gray-800 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
                       type="submit"
                       // onClick={() => setShowModal(false)}
                     >
-                      Avvia
+                      Launch
                     </button>
                   </div>
                 </form>

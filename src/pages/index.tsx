@@ -66,7 +66,7 @@ const Home: NextPage = () => {
             <div className="mx-auto max-w-7xl pt-6 pb-32">
               <div>
                 <div>
-                  <h4 className="text-xl font-bold tracking-tight sm:text-center sm:text-xl">
+                  <h4 className="text-center text-xl font-bold tracking-tight sm:text-xl">
                     Export your chats from this tool!
                   </h4>
                   <p className="mt-6 text-lg leading-8 text-gray-600 sm:text-center">
@@ -83,12 +83,12 @@ const Home: NextPage = () => {
                           <ExtractButton setData={setData} />
                         </div>
                         <div className="mx-1">
-                          <ImportCsvButton />
+                          <ImportCsvButton setData={setData} />
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <MessagesTable data={data} />
+                    <MessagesTable data={data} setData={setData} />
                   )}
                 </div>
               </div>
