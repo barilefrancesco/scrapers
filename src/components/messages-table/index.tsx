@@ -29,6 +29,8 @@ import { ScraperRow } from "../../types";
 import DownloadCsvButton from "../download-csv-button";
 import ImportCsvButton from "../import-csv-button";
 
+import { useTranslation } from "react-i18next";
+
 declare module "@tanstack/table-core" {
   interface FilterFns {
     fuzzy: FilterFn<unknown>;
@@ -73,6 +75,8 @@ function MessagesTable({
   data: ScraperRow[];
   setData: React.Dispatch<React.SetStateAction<ScraperRow[]>>;
 }) {
+  const { t, i18n } = useTranslation(["table"]);
+
   const rerender = React.useReducer(() => ({}), {})[1];
 
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -194,7 +198,11 @@ function MessagesTable({
             value={globalFilter ?? ""}
             onChange={(value) => setGlobalFilter(String(value))}
             className="font-lg border-block border p-2 shadow"
-            placeholder="Search all columns..."
+            placeholder={
+              t("search-bar", {
+                ns: ["table"],
+              }) ?? ""
+            }
           />
         </div>
         <div className="h-2" />
@@ -297,14 +305,24 @@ function MessagesTable({
             {">>"}
           </button>
           <span className="flex items-center gap-1">
-            <div>Page</div>
+            <div>
+              {t("page", {
+                ns: ["table"],
+              }) ?? ""}
+            </div>
             <strong>
-              {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getState().pagination.pageIndex + 1}{" "}
+              {t("of", {
+                ns: ["table"],
+              })}{" "}
               {table.getPageCount()}
             </strong>
           </span>
           <span className="flex items-center gap-1">
-            | Go to page:
+            |{" "}
+            {t("go-to-page", {
+              ns: ["table"],
+            })}
             <input
               type="number"
               defaultValue={table.getState().pagination.pageIndex + 1}
@@ -324,12 +342,24 @@ function MessagesTable({
           >
             {[10, 20, 30, 40, 50].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
-                Show {pageSize}
+                {t("rows-per-page", {
+                  ns: ["table"],
+                })}{" "}
+                {pageSize}
               </option>
             ))}
           </select>
         </div>
-        <div>{table.getPrePaginationRowModel().rows.length} Rows</div>
+        <div>
+          {table.getPrePaginationRowModel().rows.length}{" "}
+          {table.getPrePaginationRowModel().rows.length > 1
+            ? t("rows", {
+                ns: ["table"],
+              })
+            : t("row", {
+                ns: ["table"],
+              })}
+        </div>
       </div>
       <div className="mx-auto flex justify-center">
         <div className="mx-1">

@@ -6,6 +6,9 @@ import { Chats, FormInput, ScraperRow, Scrapers, Option } from "../../types";
 import makeAnimated from "react-select/animated";
 import { Portal } from "react-portal";
 
+import "../../i18n";
+import { useTranslation } from "react-i18next";
+
 const LINKS = {
   [Scrapers.WHATSAPP]: `/api/whatsapp/`,
   [Scrapers.TELEGRAM]: `/api/telegram/`,
@@ -24,6 +27,7 @@ const ExtractButton = ({
 }: {
   setData: React.Dispatch<React.SetStateAction<ScraperRow[]>>;
 }) => {
+  const { t, i18n } = useTranslation(["btns"]);
   const [showModal, setShowModal] = useState(false);
 
   const { register, control, handleSubmit } = useForm<FormInput>();
@@ -67,7 +71,9 @@ const ExtractButton = ({
         className="inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
         onClick={() => setShowModal(true)}
       >
-        Extract
+        {t("extract", {
+          ns: ["btns"],
+        })}
       </button>
       {showModal ? (
         <Portal node={document && document.body}>
@@ -77,7 +83,11 @@ const ExtractButton = ({
               <div className="relative flex w-full flex-col rounded-lg border-0 bg-white shadow-lg outline-none focus:outline-none">
                 {/*header*/}
                 <div className="flex items-start justify-between rounded-t border-b border-solid border-slate-200 p-3">
-                  <h3 className="text-lg font-semibold">Extract your data</h3>
+                  <h3 className="text-lg font-semibold">
+                    {t("modal-extract-header", {
+                      ns: ["labels"],
+                    })}
+                  </h3>
                   <button
                     className="float-right ml-auto border-0 bg-transparent p-1 text-3xl font-semibold leading-none text-black opacity-5 outline-none focus:outline-none"
                     onClick={() => setShowModal(false)}
@@ -88,7 +98,10 @@ const ExtractButton = ({
                   <div className="relative flex-auto p-3">
                     <div className="flex flex-col p-4">
                       <label>
-                        Choose scrapers <span className="text-red-600">*</span>
+                        {t("modal-extract-choose-scrapers", {
+                          ns: ["labels"],
+                        })}{" "}
+                        <span className="text-red-600">*</span>
                       </label>
                       <Controller
                         name="scrapers"
@@ -112,7 +125,10 @@ const ExtractButton = ({
                     </div>
                     <div className="flex flex-col p-4">
                       <label>
-                        Phone number <span className="text-red-600">*</span>
+                        {t("modal-extract-phone-number", {
+                          ns: ["labels"],
+                        })}{" "}
+                        <span className="text-red-600">*</span>
                       </label>
                       <input
                         className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
@@ -122,7 +138,12 @@ const ExtractButton = ({
                       />
                     </div>
                     <div className="flex flex-col p-4">
-                      <label>Contacts list (optional)</label>
+                      <label>
+                        {" "}
+                        {t("modal-extract-contacts-list", {
+                          ns: ["labels"],
+                        })}
+                      </label>
                       <input
                         className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
                         type="text"
@@ -137,14 +158,18 @@ const ExtractButton = ({
                       type="button"
                       onClick={() => setShowModal(false)}
                     >
-                      Close
+                      {t("close", {
+                        ns: ["btns"],
+                      })}
                     </button>
                     <button
                       className="inline-block rounded-lg bg-gray-800 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
                       type="submit"
                       // onClick={() => setShowModal(false)}
                     >
-                      Launch
+                      {t("launch", {
+                        ns: ["btns"],
+                      })}
                     </button>
                   </div>
                 </form>
