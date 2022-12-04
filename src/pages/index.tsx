@@ -11,7 +11,12 @@ import MessagesTable from "../components/messages-table";
 import ExtractButton from "../components/extract-button";
 import ImportCsvButton from "../components/import-csv-button";
 
+import "../i18n";
+import { useTranslation } from "react-i18next";
+
 const Home: NextPage = () => {
+  const { t, i18n } = useTranslation(["home"]);
+
   const [data, setData] = useState<ScraperRow[]>([]);
   const rerender = useReducer(() => ({}), {})[1];
 
@@ -67,7 +72,7 @@ const Home: NextPage = () => {
               <div>
                 <div>
                   <h4 className="text-center text-xl font-bold tracking-tight sm:text-xl">
-                    Export your chats from this tool!
+                    {t("export-your-chats-from-this-tool", { ns: ["home"] })}
                   </h4>
                   <p className="mt-6 text-lg leading-8 text-gray-600 sm:text-center">
                     {/* {JSON.stringify(telegramData.data)} */}
@@ -77,7 +82,11 @@ const Home: NextPage = () => {
                   </p>
                   {data.length == 0 ? (
                     <div className="flex flex-col justify-center gap-2 text-center">
-                      <p>No data available. Let's extract some messages!</p>{" "}
+                      <p>
+                        {t("no-data-available", {
+                          ns: ["home"],
+                        })}
+                      </p>{" "}
                       <div className="mx-auto flex">
                         <div className="mx-1">
                           <ExtractButton setData={setData} />

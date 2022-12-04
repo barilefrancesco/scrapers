@@ -4,6 +4,9 @@ import { Portal } from "react-portal";
 import { FileUploader } from "react-drag-drop-files";
 import Papa from "papaparse";
 
+import "../../i18n";
+import { useTranslation } from "react-i18next";
+
 const fileTypes = ["CSV"];
 
 const ImportCsvButton = ({
@@ -11,6 +14,8 @@ const ImportCsvButton = ({
 }: {
   setData: React.Dispatch<React.SetStateAction<ScraperRow[]>>;
 }) => {
+  const { t, i18n } = useTranslation(["btns", "labels"]);
+
   const [showModal, setShowModal] = useState(false);
   const [file, setFile] = useState<File>();
 
@@ -40,7 +45,9 @@ const ImportCsvButton = ({
         className="inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
         onClick={() => setShowModal(true)}
       >
-        Import from CSV
+        {t("import-from-csv", {
+          ns: ["btns"],
+        })}
       </button>
       {showModal ? (
         <Portal node={document && document.body}>
@@ -50,7 +57,11 @@ const ImportCsvButton = ({
               <div className="relative flex w-full flex-col rounded-lg border-0 bg-white shadow-lg outline-none focus:outline-none">
                 {/*header*/}
                 <div className="flex items-start justify-between rounded-t border-b border-solid border-slate-200 p-3">
-                  <h3 className="text-lg font-semibold">Import your data</h3>
+                  <h3 className="text-lg font-semibold">
+                    {t("modal-import-header", {
+                      ns: ["labels"],
+                    })}
+                  </h3>
                   <button
                     className="float-right ml-auto border-0 bg-transparent p-1 text-3xl font-semibold leading-none text-black opacity-5 outline-none focus:outline-none"
                     onClick={() => setShowModal(false)}
@@ -87,20 +98,31 @@ const ImportCsvButton = ({
                                 </svg>
                                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                                   <span className="font-semibold">
-                                    Click to upload
+                                    {t("modal-import-click-upl", {
+                                      ns: ["labels"],
+                                    })}
                                   </span>{" "}
-                                  or drag and drop
+                                  {t("modal-import-drag-drop", {
+                                    ns: ["labels"],
+                                  })}
                                 </p>
                                 <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
-                                  Only CSV file
+                                  {t("modal-import-only-csv", {
+                                    ns: ["labels"],
+                                  })}
                                 </p>
                                 {file ? (
                                   <p className="font-semibold text-green-500">
-                                    File name: {file.name}
+                                    {t("modal-import-file-name", {
+                                      ns: ["labels"],
+                                    })}
+                                    : {file.name}
                                   </p>
                                 ) : (
                                   <p className="font-semibold text-gray-500">
-                                    No files uploaded yet
+                                    {t("modal-import-no-file-yet", {
+                                      ns: ["labels"],
+                                    })}
                                   </p>
                                 )}
                               </div>
@@ -122,14 +144,18 @@ const ImportCsvButton = ({
                     type="button"
                     onClick={() => setShowModal(false)}
                   >
-                    Close
+                    {t("close", {
+                      ns: ["btns"],
+                    })}
                   </button>
                   <button
                     className="inline-block rounded-lg bg-gray-800 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
                     type="submit"
                     onClick={() => importCsv()}
                   >
-                    Import
+                    {t("import", {
+                      ns: ["btns"],
+                    })}
                   </button>
                 </div>
                 {/* </form> */}
