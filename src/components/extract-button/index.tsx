@@ -35,7 +35,6 @@ const ExtractButton = ({
     if (scrapers) {
       {
         const datasToRender: ScraperRow[] = [];
-        setData(datasToRender);
         scrapers.forEach(async (scraper) => {
           const response = await (await fetch(LINKS[scraper])).json();
 
