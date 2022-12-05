@@ -5,5 +5,10 @@
     "of": "su",
     "rows-per-page": "Mostra",
     "row": "Rig",
-    "rows": "Righe"
+    "rows": "Righe",
+    "col-contact": "Contatto",
+    "col-sender": "Mittente",
+    "col-text": "Testo",
+    "col-date": "Data",
+    "col-hour": "Ora"
 }

@@ -2,31 +2,31 @@ import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 
 //Import all translation files
-import translationHomeEnglish from "./Translation/English/translationHome.json";
-import translationHomeItalian from "./Translation/Italian/translationHome.json";
+import homeEnglish from "./translation/english/home.json";
+import homeItalian from "./translation/italian/home.json";
 
-import translationBtnsEnglish from "./Translation/English/translationBtns.json";
-import translationBtnsItalian from "./Translation/Italian/translationBtns.json";
+import btnsEnglish from "./translation/english/btns.json";
+import btnsItalian from "./translation/italian/btns.json";
 
-import translationLabelsEnglish from "./Translation/English/translationLabels.json";
-import translationLabelsItalian from "./Translation/Italian/translationLabels.json";
+import labelsEnglish from "./translation/english/labels.json";
+import labelsItalian from "./translation/italian/labels.json";
 
-import translationTableEnglish from "./Translation/English/translationTable.json";
-import translationTableItalian from "./Translation/Italian/translationTable.json";
+import tableEnglish from "./translation/english/table.json";
+import tableItalian from "./translation/italian/table.json";
 
 //---Use different namespaces
 const resources = {
   en: {
-    home: translationHomeEnglish,
-    btns: translationBtnsEnglish,
-    labels: translationLabelsEnglish,
-    table: translationTableEnglish,
+    home: homeEnglish,
+    btns: btnsEnglish,
+    labels: labelsEnglish,
+    table: tableEnglish,
   },
   it: {
-    home: translationHomeItalian,
-    btns: translationBtnsItalian,
-    labels: translationLabelsItalian,
-    table: translationTableItalian,
+    home: homeItalian,
+    btns: btnsItalian,
+    labels: labelsItalian,
+    table: tableItalian,
   },
 };
 

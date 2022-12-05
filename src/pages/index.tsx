@@ -49,8 +49,8 @@ const Home: NextPage = () => {
                   />
                 </a>
               </div>
-              <div className="hidden lg:flex lg:min-w-0 lg:flex-1 lg:justify-center lg:gap-x-12">
-                {[{ href: "#", name: "Scrapers - Dashboard" }].map((item) => (
+              <div className="lg:flex lg:min-w-0 lg:flex-1 lg:justify-center lg:gap-x-12">
+                {[{ href: "/", name: "Scrapers - Dashboard" }].map((item) => (
                   <a
                     key={item.name}
                     href={item.href}

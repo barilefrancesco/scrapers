@@ -6,7 +6,11 @@ export enum Scrapers {
 }
 
 // Modal
-export type FormInput = { scrapers?: Scrapers[]; phone?: string; contacts?: string };
+export type FormInput = {
+  scrapers?: Scrapers[];
+  phone?: string;
+  contacts?: string;
+};
 
 // API Response
 export type Mention = {
@@ -37,15 +41,15 @@ export type Chats = {
 
 // Table
 export type ScraperRow = {
-  idConversazione: string; // Valore identificiativo sequenziiale
-  contatto: string; // Tizio con cui si sta parlando (o gruppo)
-  idMessaggio: string; // Valore identificiativo sequenziiale
-  mittente: string; // Chi scrive il messaggio
-  testo: string; // Testo del messaggio
-  data: string; // Data del messaggio
-  ora: string; // Ora del messaggio
-  idMessaggioCitato: string; // Se esiste è il messaggio a cui ci si riferisce
-  testoCitato: string; // Testo del messaggio citato
-  mittenteCitato: string; // Chi scrive il messaggio
+  conversationId: string; // Valore identificiativo sequenziiale
+  contact: string; // Tizio con cui si sta parlando (o gruppo)
+  messageId: string; // Valore identificiativo sequenziiale
+  sender: string; // Chi scrive il messaggio
+  text: string; // Testo del messaggio
+  date: string; // Data del messaggio
+  hour: string; // Ora del messaggio
+  messageQuotedId: string; // Se esiste è il messaggio a cui ci si riferisce
+  textQuoted: string; // Testo del messaggio citato
+  senderMessageQuoted: string; // Chi scrive il messaggio
   scraper: string; // Tipologia di scraper
 };

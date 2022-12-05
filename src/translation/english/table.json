@@ -5,5 +5,10 @@
     "of": "of",
     "rows-per-page": "Show",
     "row": "Row",
-    "rows": "Rows"
+    "rows": "Rows",
+    "col-contact": "Contact",
+    "col-sender": "Sender",
+    "col-text": "Text",
+    "col-date": "Date",
+    "col-hour": "Hour"    
 }

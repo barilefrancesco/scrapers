@@ -87,61 +87,81 @@ function MessagesTable({
 
   const columns = React.useMemo<ColumnDef<ScraperRow, any>[]>(
     () => [
-      columnHelper.accessor("idConversazione", {
+      columnHelper.accessor("conversationId", {
         cell: (info) => info.getValue(),
         footer: (info) => info.column.id,
         filterFn: "fuzzy",
         sortingFn: fuzzySort,
       }),
-      columnHelper.accessor("contatto", {
+      columnHelper.accessor("contact", {
+        cell: (info) => info.getValue(),
+        header: () =>
+          t("col-contact", {
+            ns: ["table"],
+          }),
+        footer: (info) => info.column.id,
+        filterFn: "fuzzy",
+        sortingFn: fuzzySort,
+      }),
+      columnHelper.accessor("messageId", {
         cell: (info) => info.getValue(),
         footer: (info) => info.column.id,
         filterFn: "fuzzy",
         sortingFn: fuzzySort,
       }),
-      columnHelper.accessor("idMessaggio", {
+      columnHelper.accessor("sender", {
+        cell: (info) => info.getValue(),
+        header: () =>
+          t("col-sender", {
+            ns: ["table"],
+          }),
+        footer: (info) => info.column.id,
+        filterFn: "fuzzy",
+        sortingFn: fuzzySort,
+      }),
+      columnHelper.accessor("text", {
+        cell: (info) => info.getValue(),
+        header: () =>
+          t("col-text", {
+            ns: ["table"],
+          }),
+        footer: (info) => info.column.id,
+        filterFn: "fuzzy",
+        sortingFn: fuzzySort,
+      }),
+      columnHelper.accessor("date", {
+        cell: (info) => info.getValue(),
+        header: () =>
+          t("col-date", {
+            ns: ["table"],
+          }),
+        footer: (info) => info.column.id,
+        filterFn: "fuzzy",
+        sortingFn: fuzzySort,
+      }),
+      columnHelper.accessor("hour", {
+        cell: (info) => info.getValue(),
+        header: () =>
+          t("col-hour", {
+            ns: ["table"],
+          }),
+        footer: (info) => info.column.id,
+        filterFn: "fuzzy",
+        sortingFn: fuzzySort,
+      }),
+      columnHelper.accessor("messageQuotedId", {
         cell: (info) => info.getValue(),
         footer: (info) => info.column.id,
         filterFn: "fuzzy",
         sortingFn: fuzzySort,
       }),
-      columnHelper.accessor("mittente", {
+      columnHelper.accessor("textQuoted", {
         cell: (info) => info.getValue(),
         footer: (info) => info.column.id,
         filterFn: "fuzzy",
         sortingFn: fuzzySort,
       }),
-      columnHelper.accessor("testo", {
-        cell: (info) => info.getValue(),
-        footer: (info) => info.column.id,
-        filterFn: "fuzzy",
-        sortingFn: fuzzySort,
-      }),
-      columnHelper.accessor("data", {
-        cell: (info) => info.getValue(),
-        footer: (info) => info.column.id,
-        filterFn: "fuzzy",
-        sortingFn: fuzzySort,
-      }),
-      columnHelper.accessor("ora", {
-        cell: (info) => info.getValue(),
-        footer: (info) => info.column.id,
-        filterFn: "fuzzy",
-        sortingFn: fuzzySort,
-      }),
-      columnHelper.accessor("idMessaggioCitato", {
-        cell: (info) => info.getValue(),
-        footer: (info) => info.column.id,
-        filterFn: "fuzzy",
-        sortingFn: fuzzySort,
-      }),
-      columnHelper.accessor("testoCitato", {
-        cell: (info) => info.getValue(),
-        footer: (info) => info.column.id,
-        filterFn: "fuzzy",
-        sortingFn: fuzzySort,
-      }),
-      columnHelper.accessor("mittenteCitato", {
+      columnHelper.accessor("senderMessageQuoted", {
         cell: (info) => info.getValue(),
         footer: (info) => info.column.id,
         filterFn: "fuzzy",
@@ -149,6 +169,7 @@ function MessagesTable({
       }),
       columnHelper.accessor("scraper", {
         cell: (info) => info.getValue(),
+        header: () => "Scraper",
         footer: (info) => info.column.id,
         filterFn: "fuzzy",
         sortingFn: fuzzySort,

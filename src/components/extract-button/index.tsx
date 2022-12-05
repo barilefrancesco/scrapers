@@ -8,6 +8,8 @@ import { Portal } from "react-portal";
 
 import "../../i18n";
 import { useTranslation } from "react-i18next";
+import parserWhatsapp from "../../utils/parsers/whatsapp";
+import parserTelegram from "../../utils/parsers/telegram";
 
 const LINKS = {
   [Scrapers.WHATSAPP]: `/api/whatsapp/`,
@@ -21,53 +23,11 @@ const options: Options<Option> = [
 ];
 
 const animatedComponents = makeAnimated();
-const parserTelegram =(data:Chats)=>{
-  const datasToRender: ScraperRow[] = [];
 
-  data.conversations.forEach((conversations, indexC) => {
-    conversations.messages.forEach((message, indexM) => {
-      datasToRender.push({
-        idConversazione: indexC.toString(),
-        contatto: conversations.contact,
-        idMessaggio: indexM.toString(),
-        mittente: message.athor,
-        testo: message.message,
-        data: message.date,
-        ora: message.hours,
-        idMessaggioCitato: "0",
-        testoCitato: "",
-        mittenteCitato: "",
-        scraper: Scrapers.TELEGRAM,
-      });
-    });
-  });
-  return datasToRender
-
-}
-const parserWhatsapp =(data:Chats)=>{
-  const datasToRender: ScraperRow[] = [];
-
-  data.conversations.forEach((conversations, indexC) => {
-    conversations.messages.forEach((message, indexM) => {
-      datasToRender.push({
-        idConversazione: indexC.toString(),
-        contatto: conversations.contact,
-        idMessaggio: indexM.toString(),
-        mittente: message.athor,
-        testo: message.message,
-        data: message.date,
-        ora: message.hours,
-        idMessaggioCitato: "0",
-        testoCitato: "",
-        mittenteCitato: "",
-        scraper: Scrapers.WHATSAPP,
-      });
-    });
-  });
-  return datasToRender
-
-}
-const PARSERS = {[Scrapers.TELEGRAM]: parserTelegram, [Scrapers.WHATSAPP]: parserWhatsapp};
+const PARSERS = {
+  [Scrapers.TELEGRAM]: parserTelegram,
+  [Scrapers.WHATSAPP]: parserWhatsapp,
+};
 const ExtractButton = ({
   setData,
 }: {
@@ -80,15 +40,14 @@ const ExtractButton = ({
   const onSubmit: SubmitHandler<FormInput> = async ({ scrapers }) => {
     if (scrapers) {
       {
-        let dataScrapers : ScraperRow[] = []
-        for (const scraper of scrapers){
+        let dataScrapers: ScraperRow[] = [];
+        for (const scraper of scrapers) {
           const response = await (await fetch(LINKS[scraper])).json();
-          dataScrapers = [...dataScrapers, ...PARSERS[scraper](response)]
+          dataScrapers = [...dataScrapers, ...PARSERS[scraper](response)];
         }
-      
+
         setData(dataScrapers);
         setShowModal(false);
-
       }
     }
   };
