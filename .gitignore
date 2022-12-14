@@ -1,2 +1,7 @@
 node_modules
 .next
+venv/
+.idea
+User_Data/
+user-data/
+collected_data/
