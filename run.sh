@@ -1,19 +1,16 @@
-
 #!/bin/bash
-
 python -m venv venv
 
-source venv/bin/activate
-
-./venv/Scripts/pip install -r requirements.txt
+. venv/bin/activate
 ./venv/bin/pip install -r requirements.txt
 
-gnome-terminal -- sh -c "cd whatsapp && python app.py; bash"
+gnome-terminal -- sh -c ". venv/bin/activate && cd whatsapp && python app.py; bash"
 START "./scripts/whatsapp.sh"
 
-gnome-terminal -- sh -c "cd telegram && python app.py; bash"
-start cmd /k "cd telegram && python app.py"
+
+gnome-terminal -- sh -c ". venv/bin/activate && cd telegram && python app.py; bash"
 START "./scripts/telegram.sh"
+
 
 gnome-terminal -- sh -c "
     cd dashboard && npm run start
@@ -26,12 +23,10 @@ gnome-terminal -- sh -c "
         gnome-terminal -- sh -c \"npm run start; bash\"
     fi
 ;bash"
-
 START "./scripts/dashboard.sh"
 
 nohup open http://localhost:3000
 explorer "http://localhost:3000"
-
 
 sleep 2
 kill -9 $PPID
