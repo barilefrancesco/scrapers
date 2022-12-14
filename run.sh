@@ -6,23 +6,36 @@ source venv/bin/activate
 ./venv/Scripts/pip install -r requirements.txt
 ./venv/bin/pip install -r requirements.txt
 
-gnome-terminal -- sh -c "python3.9 whatsapp/app.py; bash"
-start cmd /k "python3.9 whatsapp/app.py"
+gnome-terminal -- sh -c "cd whatsapp && python3.9 app.py; bash"
+start cmd /k "cd whatsapp && python3.9 app.py"
 
-gnome-terminal -- sh -c "python3.9 telegram/app.py; bash"
-start cmd /k "python3.9 telegram/app.py"
+gnome-terminal -- sh -c "cd telegram && python3.9 app.py; bash"
+start cmd /k "cd telegram && python3.9 app.py"
 
-cd dashboard
-gnome-terminal -- sh -c "npm run start; bash"
-start cmd /k "npm run start"
+gnome-terminal -- sh -c "
+    cd dashboard && npm run start
+    status=$?
+    echo $status
+    if [ $status -ne 0 ]; then
+        cd dashboard
+        npm ci
+        npm run build
+        gnome-terminal -- sh -c \"npm run start; bash\"
+    fi
+;bash"
 
-status=$?
-if [ $status -ne 0 ]; then
-    npm ci
-    npm run build
-    gnome-terminal -- sh -c "npm run start; bash"
-    start cmd /k "npm run start"
-fi
+start cmd /k "
+    cd dashboard && npm run start
+    status=$?
+    echo $status
+    if [ $status -ne 0 ]; then
+        cd dashboard
+        npm ci
+        npm run build
+        start cmd /k \"npm run start\"
+    fi    
+    "
+
 
 nohup open http://localhost:3000
 explorer "http://localhost:3000"
