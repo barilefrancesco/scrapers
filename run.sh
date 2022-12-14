@@ -1,22 +1,19 @@
+
 #!/bin/bash
-python3.9 -m venv venv
-source ./venv/Scripts/activate
+
+python -m venv venv
+
 source venv/bin/activate
 
 ./venv/Scripts/pip install -r requirements.txt
 ./venv/bin/pip install -r requirements.txt
 
-gnome-terminal -- sh -c "
-    source venv/bin/activate
-    cd whatsapp
-    python3.9 app.py; bash"
-start cmd /k "cd whatsapp && python3.9 app.py"
+gnome-terminal -- sh -c "cd whatsapp && python app.py; bash"
+START "./scripts/whatsapp.sh"
 
-gnome-terminal -- sh -c "
-    source venv/bin/activate
-    cd telegram
-    python3.9 app.py; bash"
-start cmd /k "cd telegram && python3.9 app.py"
+gnome-terminal -- sh -c "cd telegram && python app.py; bash"
+start cmd /k "cd telegram && python app.py"
+START "./scripts/telegram.sh"
 
 gnome-terminal -- sh -c "
     cd dashboard && npm run start
@@ -30,20 +27,11 @@ gnome-terminal -- sh -c "
     fi
 ;bash"
 
-start cmd /k "
-    cd dashboard && npm run start
-    status=$?
-    echo $status
-    if [ $status -ne 0 ]; then
-        cd dashboard
-        npm ci
-        npm run build
-        start cmd /k \"npm run start\"
-    fi    
-    "
+START "./scripts/dashboard.sh"
 
 nohup open http://localhost:3000
 explorer "http://localhost:3000"
 
-sleep 1
+
+sleep 2
 kill -9 $PPID
