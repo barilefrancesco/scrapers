@@ -1,5 +1,6 @@
 import datetime
 import os
+import sys
 import shutil
 import traceback
 from time import sleep
@@ -18,7 +19,8 @@ import json
 
 # Download google driver from https://chromedriver.chromium.org/downloads
 # you can set the chromedriver path on the system path and remove this variable
-CHROMEDRIVER_PATH = 'utils/linux/chromedriver'
+
+CHROMEDRIVER_PATH = 'utils/linux/chromedriver' if sys.platform.startswith('linux') else 'utils/windows/chromedriver.exe'
 
 CONTACT_NAME_DIV = 'zoWT4'
 CONVERSATION_PANEL = '_33LGR'
@@ -40,7 +42,7 @@ class MessageQuoted:
 
 def json_default(value):
     if isinstance(value, datetime.date):
-        return dict(year=value.year, month=value.month, day=value.day)
+        return dict(year=value.year, month=value.month, day=value.day, hour=value.hour, minutes=value.minute)
     elif isinstance(value, Message):
         return dict(autore=value.person,
                     data=dict(year=value.date.year, month=value.date.month, day=value.date.day),
