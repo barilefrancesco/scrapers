@@ -5,3 +5,4 @@ venv/
 User_Data/
 user-data/
 collected_data/
+.session
