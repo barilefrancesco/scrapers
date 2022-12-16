@@ -56,16 +56,18 @@ export default function parserWhatsapp(data: WhatsappChat[]) {
   chats.conversations.forEach((conversations, indexC) => {
     conversations.messages.forEach((message, indexM) => {
       datasToRender.push({
-        conversationId: indexC.toString(),
-        contact: conversations.contact,
-        messageId: indexM.toString(),
-        sender: message.athor,
-        text: message.message,
-        date: message.date,
-        hour: message.hours,
-        messageQuotedId: message.mention.id,
-        textQuoted: message.mention.message,
-        senderMessageQuoted: message.mention.author,
+        conversationId: indexC.toString() ? indexC.toString() : "-",
+        contact: conversations.contact ? conversations.contact : "-",
+        messageId: indexM.toString() ? indexM.toString() : "-",
+        sender: message.athor ? message.athor : "-",
+        text: message.message ? message.message : "-",
+        date: message.date ? message.date : "-",
+        hour: message.hours ? message.hours : "-",
+        messageQuotedId: message.mention.id ? message.mention.id : "-",
+        textQuoted: message.mention.message ? message.mention.message : "-",
+        senderMessageQuoted: message.mention.author
+          ? message.mention.author
+          : "-",
         scraper: Scrapers.WHATSAPP,
       });
     });

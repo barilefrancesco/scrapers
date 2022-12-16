@@ -9,7 +9,8 @@ export enum Scrapers {
 export type FormInput = {
   scrapers?: Scrapers[];
   phone?: string;
-  contacts?: string;
+  contacts_wa?: string;
+  contacts_tl?: string;
   telegram_api_id?: string;
   telegram_api_hash?: string;
   telegram_session_code?: string;
