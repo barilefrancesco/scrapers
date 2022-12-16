@@ -10,6 +10,9 @@ export type FormInput = {
   scrapers?: Scrapers[];
   phone?: string;
   contacts?: string;
+  telegram_api_id?: string;
+  telegram_api_hash?: string;
+  telegram_session_code?: string;
 };
 
 // API Response
@@ -53,3 +56,32 @@ export type ScraperRow = {
   senderMessageQuoted: string; // Chi scrive il messaggio
   scraper: string; // Tipologia di scraper
 };
+
+/* Whastapp types */
+export type WhatsappChat = {
+  contatto: string; // Tizio con cui si sta parlando (o gruppo)
+  messaggi: WhatsappMessage[];
+};
+
+export type WhatsappMessage = {
+  autore: string; // Chi scrive il messaggio
+  data: {
+    day: number;
+    month: number;
+    year: number;
+  };
+  giorno: string;
+  messaggio: string;
+  messaggioCitato: {
+    autore: string;
+    messaggio: string;
+  };
+  ora: string;
+};
+
+/* Telegram types */
+export enum TelegramIDs {
+  API_ID = "24332766",
+  API_HASH = "167bf4d4000402e3e835ca4fd81e620c",
+  FIRST_SESSION_CODE = "0",
+}

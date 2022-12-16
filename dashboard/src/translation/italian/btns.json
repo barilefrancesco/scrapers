@@ -3,5 +3,6 @@
     "import-from-csv": "Importa da CSV",
     "close": "Chiudi",
     "launch": "Avvia",
+    "processing": "Caricamento",
     "import": "Importa"
 }
