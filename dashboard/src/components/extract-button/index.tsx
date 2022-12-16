@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Options } from "react-select";
 import Select from "react-select";
-import { Chats, FormInput, ScraperRow, Scrapers, Option } from "../../types";
+import {
+  FormInput,
+  ScraperRow,
+  Scrapers,
+  Option,
+  TelegramIDs,
+} from "../../types";
 import makeAnimated from "react-select/animated";
 import { Portal } from "react-portal";
 
@@ -10,10 +16,11 @@ import "../../i18n";
 import { useTranslation } from "react-i18next";
 import parserWhatsapp from "../../utils/parsers/whatsapp";
 import parserTelegram from "../../utils/parsers/telegram";
+import { string } from "zod";
 
 const LINKS = {
-  [Scrapers.WHATSAPP]: `http://127.0.0.1:5002/messages?contacts=triage forense`,
-  [Scrapers.TELEGRAM]: `http://127.0.0.1:5001/telegram_messages?api_id=24332766&api_hash=167bf4d4000402e3e835ca4fd81e620c&session_code=60146&phone=`,
+  [Scrapers.WHATSAPP]: `http://127.0.0.1:5002/messages`,
+  [Scrapers.TELEGRAM]: `http://127.0.0.1:5001/telegram_messages?`,
 };
 
 const options: Options<Option> = [
@@ -37,33 +44,63 @@ const ExtractButton = ({
   const [showModal, setShowModal] = useState(false);
 
   const { register, control, handleSubmit } = useForm<FormInput>();
-  const onSubmit: SubmitHandler<FormInput> = async ({ scrapers, phone }) => {
+  const onSubmit: SubmitHandler<FormInput> = async ({
+    scrapers,
+    phone,
+    contacts,
+    telegram_api_id,
+    telegram_api_hash,
+    telegram_session_code,
+  }) => {
     if (scrapers) {
       {
         let dataScrapers: ScraperRow[] = [];
         for (const scraper of scrapers) {
           if (scraper === Scrapers.TELEGRAM) {
-            const response = await (
-              await fetch(LINKS[scraper] + phone, {
-                method: "GET",
-                headers: {},
-              })
-            ).json();
+            if (phone) {
+              const response = await (
+                await fetch(
+                  LINKS[scraper] +
+                    new URLSearchParams({
+                      api_id: telegram_api_id
+                        ? telegram_api_id
+                        : TelegramIDs.API_ID,
+                      api_hash: telegram_api_hash
+                        ? telegram_api_hash
+                        : TelegramIDs.API_HASH,
+                      session_code: telegram_session_code
+                        ? telegram_session_code
+                        : TelegramIDs.FIRST_SESSION_CODE,
+                      phone: phone,
+                      // contacts: contacts ? contacts : "",
+                    }),
+                  {
+                    method: "GET",
+                    headers: {},
+                  }
+                )
+              ).json();
 
-            console.log("response: ", response);
-
-            dataScrapers = [...dataScrapers, ...PARSERS[scraper](response)];
+              dataScrapers = [...dataScrapers, ...PARSERS[scraper](response)];
+            } else {
+              console.error("Phone is required");
+            }
           } else if (scraper === Scrapers.WHATSAPP) {
+            let params = "";
+            if (contacts) {
+              params = `?contacts=${contacts}`;
+            }
             const response = await (
-              await fetch(LINKS[scraper], {
+              await fetch(LINKS[scraper] + params, {
                 method: "GET",
                 headers: {},
               })
             ).json();
 
-            console.log("response: ", response);
-
-            dataScrapers = [...dataScrapers, ...PARSERS[scraper](response)];
+            dataScrapers = [
+              ...dataScrapers,
+              ...PARSERS[scraper](JSON.parse(response.messages)),
+            ];
           }
         }
 
@@ -87,7 +124,7 @@ const ExtractButton = ({
       {showModal ? (
         <Portal node={document && document.body}>
           <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-            <div className="relative w-4/6 max-w-3xl">
+            <div className="relative w-4/6 max-w-4xl">
               {/*content*/}
               <div className="relative flex w-full flex-col rounded-lg border-0 bg-white shadow-lg outline-none focus:outline-none">
                 {/*header*/}
@@ -134,20 +171,6 @@ const ExtractButton = ({
                     </div>
                     <div className="flex flex-col p-4">
                       <label>
-                        {t("modal-extract-phone-number", {
-                          ns: ["labels"],
-                        })}{" "}
-                        <span className="text-red-600">*</span>
-                      </label>
-                      <input
-                        className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
-                        type="text"
-                        placeholder="+39 3333333333"
-                        {...register("phone", { required: true })}
-                      />
-                    </div>
-                    <div className="flex flex-col p-4">
-                      <label>
                         {" "}
                         {t("modal-extract-contacts-list", {
                           ns: ["labels"],
@@ -158,6 +181,64 @@ const ExtractButton = ({
                         type="text"
                         placeholder="Mario,Sara,+393333333333"
                         {...register("contacts")}
+                      />
+                    </div>
+                    <div className="flex justify-between p-4">
+                      <div className="grid">
+                        <label>
+                          {" "}
+                          {t("modal-extract-telegram-api-id", {
+                            ns: ["labels"],
+                          })}
+                        </label>
+                        <input
+                          className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
+                          type="text"
+                          placeholder="Set your Telegram API ID"
+                          {...register("telegram_api_id")}
+                        />
+                      </div>
+                      <div className="grid">
+                        <label>
+                          {" "}
+                          {t("modal-extract-telegram-session-code", {
+                            ns: ["labels"],
+                          })}
+                        </label>
+                        <input
+                          className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
+                          type="text"
+                          placeholder="Set your Telegram API HASH"
+                          {...register("telegram_api_hash")}
+                        />
+                      </div>
+                      <div className="grid">
+                        <label>
+                          {" "}
+                          {t("modal-extract-telegram-session-code", {
+                            ns: ["labels"],
+                          })}
+                        </label>
+                        <input
+                          className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
+                          type="text"
+                          placeholder="Set your Telegram Session Code"
+                          {...register("telegram_session_code")}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-col p-4">
+                      <label>
+                        {t("modal-extract-phone-number", {
+                          ns: ["labels"],
+                        })}{" "}
+                        <span className="text-red-600">*</span>
+                      </label>
+                      <input
+                        className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
+                        type="text"
+                        placeholder="3333333333"
+                        {...register("phone", { required: true })}
                       />
                     </div>
                   </div>
@@ -172,13 +253,34 @@ const ExtractButton = ({
                       })}
                     </button>
                     <button
-                      className="inline-block rounded-lg bg-gray-800 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
+                      className="flex items-center rounded-lg bg-gray-800 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
                       type="submit"
                       // onClick={() => setShowModal(false)}
                     >
-                      {t("launch", {
-                        ns: ["btns"],
-                      })}
+                      {/* <svg
+                        id="btnLaunchSvg"
+                        className="mr-3 hidden h-5 w-5 animate-spin"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          stroke-width="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg> */}
+                      <p id="btnLaunchText">
+                        {t("launch", {
+                          ns: ["btns"],
+                        })}
+                      </p>
                     </button>
                   </div>
                 </form>

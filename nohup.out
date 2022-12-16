@@ -6,3 +6,34 @@ Gtk-Message: 00:43:15.145: Not loading module "atk-bridge": The functionality is
 Apertura nella sessione del browser esistente.
 Gtk-Message: 00:44:57.185: Not loading module "atk-bridge": The functionality is provided by GTK natively. Please try to not load it.
 Apertura nella sessione del browser esistente.
+Gtk-Message: 20:36:10.768: Not loading module "atk-bridge": The functionality is provided by GTK natively. Please try to not load it.
+WARNING: Kernel has no file descriptor comparison support: Operation not permitted
+[12650:12650:1215/203612.018945:ERROR:zygote_communication_linux.cc(291)] Failed to send GetTerminationStatus message to zygote
+[12650:12650:1215/203612.020057:ERROR:service_worker_task_queue.cc(232)] DidStartWorkerFail bkkbcggnhapdmkeljlodobbkopceiche: 3
+[12650:12650:1215/203612.020258:ERROR:zygote_communication_linux.cc(291)] Failed to send GetTerminationStatus message to zygote
+[12650:12650:1215/203612.021109:ERROR:zygote_communication_linux.cc(291)] Failed to send GetTerminationStatus message to zygote
+[12650:12650:1215/203612.021754:ERROR:zygote_communication_linux.cc(291)] Failed to send GetTerminationStatus message to zygote
+[12650:12650:1215/203612.023385:ERROR:zygote_communication_linux.cc(291)] Failed to send GetTerminationStatus message to zygote
+[12650:12650:1215/203612.024093:ERROR:zygote_communication_linux.cc(291)] Failed to send GetTerminationStatus message to zygote
+[12650:12650:1215/203612.024936:ERROR:zygote_communication_linux.cc(291)] Failed to send GetTerminationStatus message to zygote
+[12650:12650:1215/203612.030631:ERROR:zygote_communication_linux.cc(291)] Failed to send GetTerminationStatus message to zygote
+[12650:12650:1215/203612.036292:ERROR:service_worker_task_queue.cc(232)] DidStartWorkerFail gppongmhjkpfnbhagpmjfkannfbllamg: 3
+[12650:12650:1215/203612.037359:ERROR:service_worker_task_queue.cc(232)] DidStartWorkerFail fmkadmapgofadopljbjfkapdkoienihi: 3
+[12650:12650:1215/203612.086281:ERROR:gpu_process_host.cc(984)] GPU process launch failed: error_code=1002
+[12650:12650:1215/203612.094724:ERROR:gpu_process_host.cc(984)] GPU process launch failed: error_code=1002
+[12650:12650:1215/203612.104001:ERROR:gpu_process_host.cc(984)] GPU process launch failed: error_code=1002
+[12650:12650:1215/203612.108862:ERROR:service_worker_task_queue.cc(232)] DidStartWorkerFail bkkbcggnhapdmkeljlodobbkopceiche: 3
+[12650:12650:1215/203612.109686:ERROR:gpu_process_host.cc(984)] GPU process launch failed: error_code=1002
+[12650:12650:1215/203612.111239:ERROR:object_proxy.cc(623)] Failed to call method: org.freedesktop.ScreenSaver.GetActive: object_path= /org/freedesktop/ScreenSaver: org.freedesktop.DBus.Error.NotSupported: This method is not implemented
+[12650:12650:1215/203612.113244:ERROR:gpu_process_host.cc(984)] GPU process launch failed: error_code=1002
+[12650:12650:1215/203612.115176:ERROR:gpu_process_host.cc(984)] GPU process launch failed: error_code=1002
+[12650:12650:1215/203612.116836:ERROR:gpu_process_host.cc(984)] GPU process launch failed: error_code=1002
+[12650:12650:1215/203612.118120:ERROR:gpu_process_host.cc(984)] GPU process launch failed: error_code=1002
+[12650:12650:1215/203612.119326:ERROR:gpu_process_host.cc(984)] GPU process launch failed: error_code=1002
+[12650:12650:1215/203612.119361:FATAL:gpu_data_manager_impl_private.cc(440)] GPU process isn't usable. Goodbye.
+[1215/203612.122697:ERROR:ptracer.cc(567)] ptrace: Input/output error (5)
+[1215/203612.123023:ERROR:ptracer.cc(567)] ptrace: Input/output error (5)
+[1215/203612.233013:ERROR:elf_dynamic_array_reader.h(64)] tag not found
+[1215/203612.262306:ERROR:elf_dynamic_array_reader.h(64)] tag not found
+Gtk-Message: 14:17:21.684: Not loading module "atk-bridge": The functionality is provided by GTK natively. Please try to not load it.
+Apertura nella sessione del browser esistente.

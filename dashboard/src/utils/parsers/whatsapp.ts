@@ -1,9 +1,59 @@
-import { Chats, ScraperRow, Scrapers } from "../../types";
+import {
+  Chat,
+  Chats,
+  Message,
+  Mention,
+  ScraperRow,
+  Scrapers,
+  WhatsappMessage,
+  WhatsappChat,
+} from "../../types";
 
-export default function parserWhatsapp(data: Chats) {
+export default function parserWhatsapp(data: WhatsappChat[]) {
+  let singleChat: Chat;
+  let conversations: Chat[] = [];
+
+  let messages: Message[] = [];
+  for (const chat of data) {
+    const chatName = chat.contatto;
+    const chatMessages: WhatsappMessage[] = chat.messaggi;
+
+    for (const message of chatMessages) {
+      let mention: Mention = {
+        id: Date.now().toString(),
+        author: message.messaggioCitato.autore,
+        message: message.messaggioCitato.messaggio,
+      };
+      messages = [
+        ...messages,
+        {
+          athor: message.autore,
+          message: message.messaggio,
+          date: message.giorno,
+          day: "",
+          hours: message.ora,
+          mention: mention,
+        },
+      ];
+    }
+
+    singleChat = {
+      id: Date.now().toString(),
+      contact: chatName,
+      messages: messages,
+    };
+
+    conversations = [...conversations, singleChat];
+  }
+
+  let chats: Chats = {
+    scraper: Scrapers.WHATSAPP,
+    conversations: conversations,
+  };
+
   const datasToRender: ScraperRow[] = [];
 
-  data.conversations.forEach((conversations, indexC) => {
+  chats.conversations.forEach((conversations, indexC) => {
     conversations.messages.forEach((message, indexM) => {
       datasToRender.push({
         conversationId: indexC.toString(),
@@ -13,9 +63,9 @@ export default function parserWhatsapp(data: Chats) {
         text: message.message,
         date: message.date,
         hour: message.hours,
-        messageQuotedId: "0",
-        textQuoted: "",
-        senderMessageQuoted: "",
+        messageQuotedId: message.mention.id,
+        textQuoted: message.mention.message,
+        senderMessageQuoted: message.mention.author,
         scraper: Scrapers.WHATSAPP,
       });
     });

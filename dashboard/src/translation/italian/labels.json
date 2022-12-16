@@ -8,5 +8,8 @@
     "modal-import-drag-drop": "o trascina e rilascia",
     "modal-import-only-csv": "Solo file CSV",
     "modal-import-no-file-yet": "Nessun file caricato",
-    "modal-import-file-name": "Nome del file"
+    "modal-import-file-name": "Nome del file",
+    "modal-extract-telegram-api-id": "Telegram - API ID",
+    "modal-extract-telegram-api-hash": "Telegram - API Hash",
+    "modal-extract-telegram-session-code": "Telegram - Session Code"
 }
