@@ -12,5 +12,8 @@
     "modal-import-file-name": "File name",
     "modal-extract-telegram-api-id": "Telegram - API ID",
     "modal-extract-telegram-api-hash": "Telegram - API Hash",
-    "modal-extract-telegram-session-code": "Telegram - Session Code"
+    "modal-extract-telegram-session-code": "Telegram - Session Code",
+
+    "modal-get-telegram-session-code-title": "Get Telegram session code",
+    "modal-get-telegram-session-code-message": "Open Telegram on your phone and get the session code"
 }
