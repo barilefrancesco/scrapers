@@ -18,6 +18,18 @@ import parserWhatsapp from "../../utils/parsers/whatsapp";
 import parserTelegram from "../../utils/parsers/telegram";
 import { Transition, Dialog } from "@headlessui/react";
 
+import { useSelector, useDispatch } from "react-redux";
+import { show, hide } from "../../redux/features/loading/loadingSlice";
+
+import LoadingSpinner from "../loadingSpinner";
+
+// This priority is used to determine which scraper to use first
+// I chose to use telegram first because if there is no session for telegram it will require code and then run both scrapers.
+const SCRPAER_PRIORITY = {
+  [Scrapers.TELEGRAM]: 1,
+  [Scrapers.WHATSAPP]: 2,
+};
+
 const LINKS = {
   [Scrapers.WHATSAPP]: `http://127.0.0.1:5002/messages`,
   [Scrapers.TELEGRAM]: `http://127.0.0.1:5001/telegram_messages?`,
@@ -35,6 +47,7 @@ const PARSERS = {
   [Scrapers.TELEGRAM]: parserTelegram,
   [Scrapers.WHATSAPP]: parserWhatsapp,
 };
+
 const ExtractButton = ({
   setData,
 }: {
@@ -45,6 +58,8 @@ const ExtractButton = ({
 
   const [showTelegramSessionModal, setshowTelegramSessionModal] =
     useState(false);
+
+  const dispatch = useDispatch();
 
   const { register, control, handleSubmit, watch } = useForm<FormInput>();
 
@@ -74,7 +89,7 @@ const ExtractButton = ({
       document.getElementById("contacts_tl_container")?.classList.add("hidden");
       document
         .getElementById("contacts_tl_container")
-        ?.classList.remove("flex");
+        ?.classList.remove("md:flex");
     }
 
     if (hasWhatsapp) {
@@ -88,7 +103,7 @@ const ExtractButton = ({
       document.getElementById("contacts_wa_container")?.classList.add("hidden");
       document
         .getElementById("contacts_wa_container")
-        ?.classList.remove("flex");
+        ?.classList.remove("md:flex");
     }
   };
 
@@ -104,7 +119,6 @@ const ExtractButton = ({
 
   const onOpenModal = () => {
     const previous_scrapers = watch("scrapers");
-    console.log(previous_scrapers);
 
     const hasTelegram = previous_scrapers?.includes(Scrapers.TELEGRAM);
     const hasWhatsapp = previous_scrapers?.includes(Scrapers.WHATSAPP);
@@ -163,6 +177,26 @@ const ExtractButton = ({
   }) => {
     if (scrapers) {
       {
+        dispatch(show());
+
+        scrapers.sort((a, b) => {
+          var important_a = SCRPAER_PRIORITY[a],
+            important_b = SCRPAER_PRIORITY[b],
+            ret;
+
+          if (important_a && !important_b) {
+            ret = -1;
+          } else if (important_b && !important_a) {
+            ret = 1;
+          } else if (important_a && important_b) {
+            ret = important_a - important_b;
+          } else {
+            ret = 0;
+          }
+
+          return ret;
+        });
+
         let dataScrapers: ScraperRow[] = [];
         for (const scraper of scrapers) {
           if (scraper === Scrapers.TELEGRAM) {
@@ -194,6 +228,7 @@ const ExtractButton = ({
 
                 setShowModal(false);
                 setshowTelegramSessionModal(true);
+                dispatch(hide());
                 return;
               }
 
@@ -223,9 +258,13 @@ const ExtractButton = ({
         setData(dataScrapers);
         setShowModal(false);
         setshowTelegramSessionModal(false);
+
+        dispatch(hide());
       }
     }
   };
+
+  const isLoading = useSelector((state: any) => state.loading.value);
 
   return (
     <>
@@ -241,6 +280,7 @@ const ExtractButton = ({
       {showModal ? (
         <Portal node={document && document.body}>
           <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+            {isLoading && <LoadingSpinner />}
             <div className="relative sm:w-4/6 ">
               {/*content*/}
               <div className="relative flex w-full flex-col rounded-lg border-0 bg-white shadow-lg outline-none focus:outline-none">
@@ -435,6 +475,7 @@ const ExtractButton = ({
           </Transition.Child>
 
           <div className="fixed inset-0 z-10 overflow-y-auto">
+            {isLoading && <LoadingSpinner />}
             <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
               <Transition.Child
                 as={Fragment}

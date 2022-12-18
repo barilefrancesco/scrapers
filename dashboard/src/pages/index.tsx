@@ -20,7 +20,7 @@ const Home: NextPage = () => {
   const [data, setData] = useState<ScraperRow[]>([]);
   const rerender = useReducer(() => ({}), {})[1];
 
-  return (
+  const dashbaord = (
     <Fragment>
       <Head>
         <title>Scrapers - Dashboard</title>
@@ -107,6 +107,8 @@ const Home: NextPage = () => {
       </div>
     </Fragment>
   );
+
+  return dashbaord;
 };
 
 export default Home;
