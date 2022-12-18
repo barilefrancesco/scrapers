@@ -59,15 +59,17 @@ const ExtractButton = ({
 
     if (hasTelegram) {
       document.getElementById("telegramFields")?.classList.remove("hidden");
-      document.getElementById("telegramFields")?.classList.add("flex");
+      document.getElementById("telegramFields")?.classList.add("lg:flex");
 
       document
         .getElementById("contacts_tl_container")
         ?.classList.remove("hidden");
-      document.getElementById("contacts_tl_container")?.classList.add("flex");
+      document
+        .getElementById("contacts_tl_container")
+        ?.classList.add("md:flex");
     } else {
       document.getElementById("telegramFields")?.classList.add("hidden");
-      document.getElementById("telegramFields")?.classList.remove("flex");
+      document.getElementById("telegramFields")?.classList.remove("lg:flex");
 
       document.getElementById("contacts_tl_container")?.classList.add("hidden");
       document
@@ -79,7 +81,9 @@ const ExtractButton = ({
       document
         .getElementById("contacts_wa_container")
         ?.classList.remove("hidden");
-      document.getElementById("contacts_wa_container")?.classList.add("flex");
+      document
+        .getElementById("contacts_wa_container")
+        ?.classList.add("md:flex");
     } else {
       document.getElementById("contacts_wa_container")?.classList.add("hidden");
       document
@@ -110,12 +114,14 @@ const ExtractButton = ({
     setTimeout(() => {
       if (hasTelegram) {
         document.getElementById("telegramFields")?.classList.remove("hidden");
-        document.getElementById("telegramFields")?.classList.add("flex");
+        document.getElementById("telegramFields")?.classList.add("md:flex");
 
         document
           .getElementById("contacts_tl_container")
           ?.classList.remove("hidden");
-        document.getElementById("contacts_tl_container")?.classList.add("flex");
+        document
+          .getElementById("contacts_tl_container")
+          ?.classList.add("md:flex");
       } else {
         document.getElementById("telegramFields")?.classList.add("hidden");
         document.getElementById("telegramFields")?.classList.remove("flex");
@@ -132,7 +138,9 @@ const ExtractButton = ({
         document
           .getElementById("contacts_wa_container")
           ?.classList.remove("hidden");
-        document.getElementById("contacts_wa_container")?.classList.add("flex");
+        document
+          .getElementById("contacts_wa_container")
+          ?.classList.add("md:flex");
       } else {
         document
           .getElementById("contacts_wa_container")
@@ -182,14 +190,13 @@ const ExtractButton = ({
 
               // check if response has err_code
               if (response.err_code) {
-                console.error("Error code: ", response.err_code);
+                // console.error("Error code: ", response.err_code);
 
                 setShowModal(false);
                 setshowTelegramSessionModal(true);
                 return;
               }
 
-              console.log("telegram response: ", response);
               dataScrapers = [...dataScrapers, ...PARSERS[scraper](response)];
             } else {
               console.error("Phone is required");
@@ -234,7 +241,7 @@ const ExtractButton = ({
       {showModal ? (
         <Portal node={document && document.body}>
           <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-            <div className="relative w-4/6 max-w-4xl">
+            <div className="relative sm:w-4/6 ">
               {/*content*/}
               <div className="relative flex w-full flex-col rounded-lg border-0 bg-white shadow-lg outline-none focus:outline-none">
                 {/*header*/}
@@ -252,7 +259,7 @@ const ExtractButton = ({
                 {/*body*/}
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="relative flex-auto p-3">
-                    <div className="flex w-full justify-between">
+                    <div className="w-full justify-between md:flex">
                       <div className="flex w-full flex-col p-4">
                         <label>
                           {t("modal-extract-choose-scrapers", {
@@ -296,7 +303,7 @@ const ExtractButton = ({
                         />
                       </div>
                     </div>
-                    <div className="flex w-full justify-between">
+                    <div className="w-full justify-between md:flex">
                       <div
                         id="contacts_wa_container"
                         className="hidden w-full flex-col p-4"
@@ -308,7 +315,7 @@ const ExtractButton = ({
                           })}
                         </label>
                         <input
-                          className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
+                          className="inline-block w-full rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
                           type="text"
                           placeholder="Mario,Sara,+393333333333"
                           {...register("contacts_wa")}
@@ -325,7 +332,7 @@ const ExtractButton = ({
                           })}
                         </label>
                         <input
-                          className="inline-block rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
+                          className="inline-block w-full rounded-lg px-3 py-1.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
                           type="text"
                           placeholder="Mario,Sara,+393333333333"
                           {...register("contacts_tl")}
@@ -440,7 +447,7 @@ const ExtractButton = ({
               >
                 <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                   <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div className="sm:flex sm:items-start">
+                    <div className="sm:items-start md:flex">
                       {/* <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                       <ExclamationIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div> */}

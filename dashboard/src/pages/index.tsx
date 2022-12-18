@@ -68,7 +68,7 @@ const Home: NextPage = () => {
         </div>
         <main>
           <div className="relative px-6 lg:px-8">
-            <div className="mx-auto max-w-7xl pt-6 pb-32">
+            <div className="max-w-8xl mx-auto pt-6 pb-32">
               <div>
                 <div>
                   <h4 className="text-center text-xl font-bold tracking-tight sm:text-xl">
