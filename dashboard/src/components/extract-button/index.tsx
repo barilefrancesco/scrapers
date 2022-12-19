@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { MultiValue, Options } from "react-select";
 import Select from "react-select";
@@ -23,15 +23,8 @@ import { show, hide } from "../../redux/features/loading/loadingSlice";
 
 import LoadingSpinner from "../loadingSpinner";
 
-// This priority is used to determine which scraper to use first
-// I chose to use telegram first because if there is no session for telegram it will require code and then run both scrapers.
-const SCRPAER_PRIORITY = {
-  [Scrapers.TELEGRAM]: 1,
-  [Scrapers.WHATSAPP]: 2,
-};
-
 const LINKS = {
-  [Scrapers.WHATSAPP]: `http://127.0.0.1:5002/messages`,
+  [Scrapers.WHATSAPP]: `http://127.0.0.1:5002/messages?`,
   [Scrapers.TELEGRAM]: `http://127.0.0.1:5001/telegram_messages?`,
 };
 
@@ -118,6 +111,8 @@ const ExtractButton = ({
   }
 
   const onOpenModal = () => {
+    setDataScrapersCollection(undefined);
+
     const previous_scrapers = watch("scrapers");
 
     const hasTelegram = previous_scrapers?.includes(Scrapers.TELEGRAM);
@@ -179,26 +174,9 @@ const ExtractButton = ({
       {
         dispatch(show());
 
-        scrapers.sort((a, b) => {
-          var important_a = SCRPAER_PRIORITY[a],
-            important_b = SCRPAER_PRIORITY[b],
-            ret;
-
-          if (important_a && !important_b) {
-            ret = -1;
-          } else if (important_b && !important_a) {
-            ret = 1;
-          } else if (important_a && important_b) {
-            ret = important_a - important_b;
-          } else {
-            ret = 0;
-          }
-
-          return ret;
-        });
-
-        let dataScrapers: ScraperRow[] = [];
-        for (const scraper of scrapers) {
+        for (const scraper of scrapers.filter(
+          (s) => !dataScrapersCollection || !!!dataScrapersCollection[s]
+        )) {
           if (scraper === Scrapers.TELEGRAM) {
             if (phone) {
               const response = await await fetch(
@@ -224,38 +202,46 @@ const ExtractButton = ({
 
               // check if response has err_code
               if (response.err_code) {
-                // console.error("Error code: ", response.err_code);
-
                 setShowModal(false);
                 setshowTelegramSessionModal(true);
                 dispatch(hide());
                 return;
               }
 
-              dataScrapers = [...dataScrapers, ...PARSERS[scraper](response)];
+              setDataScrapersCollection((prev) => {
+                const newData = prev || {};
+                return {
+                  ...newData,
+                  [scraper]: PARSERS[scraper](response),
+                };
+              });
             } else {
               console.error("Phone is required");
             }
           } else if (scraper === Scrapers.WHATSAPP) {
-            let params = "";
-            if (contacts_wa) {
-              params = `?contacts=${contacts_wa}`;
-            }
             const response = await (
-              await fetch(LINKS[scraper] + params, {
-                method: "GET",
-                headers: {},
-              })
+              await fetch(
+                LINKS[scraper] +
+                  new URLSearchParams({
+                    contacts: contacts_wa ? contacts_wa : "",
+                  }),
+                {
+                  method: "GET",
+                  headers: {},
+                }
+              )
             ).json();
 
-            dataScrapers = [
-              ...dataScrapers,
-              ...PARSERS[scraper](JSON.parse(response.messages)),
-            ];
+            setDataScrapersCollection((prev) => {
+              const newData = prev || {};
+              return {
+                ...newData,
+                [scraper]: [...PARSERS[scraper](JSON.parse(response.messages))],
+              };
+            });
           }
         }
 
-        setData(dataScrapers);
         setShowModal(false);
         setshowTelegramSessionModal(false);
 
@@ -265,6 +251,22 @@ const ExtractButton = ({
   };
 
   const isLoading = useSelector((state: any) => state.loading.value);
+  const [dataScrapersCollection, setDataScrapersCollection] =
+    useState<{ [key in Scrapers]?: ScraperRow[] | undefined }>();
+
+  useEffect(() => {
+    if (!dataScrapersCollection) {
+      setData([] as ScraperRow[]);
+    } else {
+      setData(
+        Object.keys(dataScrapersCollection).reduce((acc, key) => {
+          const rows = dataScrapersCollection[key as Scrapers];
+          if (rows) return [...acc, ...rows];
+          return acc;
+        }, [] as ScraperRow[])
+      );
+    }
+  }, [dataScrapersCollection]);
 
   return (
     <>
