@@ -1,29 +1,28 @@
 import datetime
+import json
 import os
-import sys
+import re
 import shutil
+import sys
 import traceback
 from time import sleep
 
+from SortedSet.sorted_set import SortedSet
 from bs4 import BeautifulSoup
-from flask import Flask, jsonify
+from flask import Flask
 from flask_cors import CORS
 from flask_restful import Api, request
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from sortedcontainers import SortedSet
-
-global SCROLL_TO, SCROLL_SIZE
-import re
-import json
 
 # Download google driver from https://chromedriver.chromium.org/downloads
 # you can set the chromedriver path on the system path and remove this variable
 
 CHROMEDRIVER_PATH = 'utils/linux/chromedriver' if sys.platform.startswith('linux') else 'utils/windows/chromedriver.exe'
 
-CONTACT_NAME_DIV = 'zoWT4'
-CONVERSATION_PANEL = '_33LGR'
+CONTACT_NAME_DIV = 'k8VZe'
+CONVERSATION_PANEL = '_2Ex_b'
+CONTACT_NAME = '_21S-L'
 USER_DATA_DIR = 'C:/user-data'
 
 app = Flask(__name__)
@@ -43,7 +42,7 @@ class MessageQuoted:
 def json_default(value):
     if isinstance(value, datetime.date):
         return dict(year=value.year, month=value.month, day=value.day, hour=value.hour, minutes=value.minute)
-    elif isinstance(value, Message):
+    if isinstance(value, Message):
         return dict(autore=value.person,
                     data=dict(year=value.date.year, month=value.date.month, day=value.date.day),
                     giorno=value.day,
@@ -76,6 +75,7 @@ class Message:
         if self.quote.autore == "" and self.day != "":
             print("[%s, %s]  %s %s " % (
                 self.day, self.time, self.person, self.text))
+        return 0
 
     def asString(self):
         if self.quote.autore != "":
@@ -123,7 +123,7 @@ def manageHtml(soup):
 
         if (elemento):
             elem = elemento.attrs['data-pre-plain-text']
-            e = message.find('span', attrs={'class': 'selectable-text', 'class': 'copyable-text'})
+            e = message.find('span', attrs={'class': ['selectable-text', 'copyable-text']})
             if e:
                 m = Message(e.text, elem.split(", ")[1].split("]")[0],
                             elem.split(", ")[0].split("[")[1],
@@ -146,32 +146,37 @@ def manageHtml(soup):
                 messages.add(m)
         else:
             tuo = message.find('span', attrs={'aria-label': 'Tu:'})
-            suo = message.find('span', attrs={'dir': 'auto'})
             if tuo:
                 m = Message("<audio>", lastDay, lastTime, "Tu:", "", "")
                 try:
                     if (m.day):
-                        m.date = datetime.datetime(int(m.day.split("/")[2]), int(m.day.split("/")[1]),
-                                                   int(m.day.split("/")[0]),
-                                                   int(m.time.split(":")[0]), int(m.time.split(":")[1]))
+                        m.date = datetime.datetime \
+                            (int(m.day.split("/")[2]), int(m.day.split("/")[1]),
+                             int(m.day.split("/")[0]),
+                             int(m.time.split(":")[0]),
+                             int(m.time.split(":")[1]))
                 except Exception as e:
+                    print(e)
                     traceback.print_exc()
                 messages.add(m)
             else:
-                m = Message("<audio>", lastDay, lastTime, suo.text, "", "")
+                m = Message("<audio>", lastDay, lastTime, message.find('span', attrs={'dir': 'auto'}).text, "", "")
                 try:
                     if (m.day):
-                        m.date = datetime.datetime(int(m.day.split("/")[2]), int(m.day.split("/")[1]),
-                                                   int(m.day.split("/")[0]),
-                                                   int(m.time.split(":")[0]), int(m.time.split(":")[1]))
+                        m.date = datetime.datetime \
+                            (int(m.day.split("/")[2]), int(m.day.split("/")[1]),
+                             int(m.day.split("/")[0]),
+                             int(m.time.split(":")[0]),
+                             int(m.time.split(":")[1]))
                 except Exception as e:
+                    print(e)
                     traceback.print_exc()
                 messages.add(m)
     return messages
 
 
 def get_messages(driver, contact, contatti):
-    global SCROLL_SIZE
+    SCROLL_SIZE = 600
     conversations = []
     if (contact != "Archiviate") and (
             len(contatti) == 0 or contact.lower() in map(str.lower, contatti)):  # ignore archive container
@@ -181,6 +186,7 @@ def get_messages(driver, contact, contatti):
             user = driver.find_element_by_xpath('//span[contains(@title, "{}")]'.format(contact))
             driver.find_element_by_tag_name("body")
         except Exception as e:
+            print(e)
             user = ""
             traceback.print_exc()
         if user != "":
@@ -208,6 +214,7 @@ def get_messages(driver, contact, contatti):
                         sleep(2)
                         scroll += SCROLL_SIZE
                 except Exception as e:
+                    print(e)
                     traceback.print_exc()
                     break
             conversations.append({"contatto": contact, "messaggi": list(messages)})
@@ -216,15 +223,12 @@ def get_messages(driver, contact, contatti):
 
 
 def mainCall(contatti):
-    global SCROLL_TO, SCROLL_SIZE
-    SCROLL_SIZE = 600
-    SCROLL_TO = 600
     conversations = []
 
     options = Options()
     options.add_argument(
         'user-data-dir=' + USER_DATA_DIR)  # saving user data so you don't have to scan the QR Code again
-    driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=options)
+    driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, options=options)
     driver.get('https://web.whatsapp.com/')
     continued = True
     while continued:
@@ -245,7 +249,7 @@ def mainCall(contatti):
             last = paneSide.get_attribute("scrollTop")
             html = paneSide.get_attribute("innerHTML")
             soup = BeautifulSoup(html, 'html5lib')
-            contacts_sel = soup.findAll('div', attrs={'class': 'zoWT4'})
+            contacts_sel = soup.findAll('div', attrs={'class': CONTACT_NAME})
             for j in contacts_sel:
                 if hasattr(j, "text") and len(j.text) > 0:
                     if list(listaContatti).count(j.text) == 0:
@@ -254,6 +258,7 @@ def mainCall(contatti):
             driver.execute_script('arguments[0].scrollTop = ' + str(scroll), paneSide)
         print(len(conversations), "conversations retrieved")
     except Exception as e:
+        print(e)
         traceback.print_exc()
     finally:
         driver.close()
@@ -290,7 +295,7 @@ def getMessages():
     else:
         contatti = []
     return {"messages": json.dumps(mainCall(contatti), default=json_default,
-                                       sort_keys=True), "status_code": 200}
+                                   sort_keys=True), "status_code": 200}
 
 
 def main():
