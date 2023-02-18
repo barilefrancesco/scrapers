@@ -1,35 +1,37 @@
-import datetime
-import json
-import os
-import re
-import shutil
-import sys
-import traceback
-from time import sleep
+# import necessari
+import datetime  # gestione date e orari
+import json  # gestione del formato JSON
+import os  # interfaccia per le funzionalità del sistema operativo
+import re  # espressioni regolari
+import shutil  # operazioni di copia, spostamento e rimozione di file e directory
+import sys  # funzioni e variabili di sistema
+import traceback  # stampa delle tracce di chiamata
+from time import sleep  # gestione delle attese
 
-from SortedSet.sorted_set import SortedSet
-from bs4 import BeautifulSoup
-from flask import Flask
-from flask_cors import CORS
-from flask_restful import Api, request
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from bs4 import BeautifulSoup  # parsing di HTML e XML
+from flask import Flask  # framework per applicazioni web
+from flask_cors import CORS  # gestione delle richieste cross-origin
+from flask_restful import Api, request  # API RESTful
+from selenium import webdriver  # automazione del browser web
+from selenium.webdriver.chrome.options import Options  # opzioni di configurazione del browser
+from sortedcontainers import SortedSet  # insieme ordinato
 
-# Download google driver from https://chromedriver.chromium.org/downloads
-# you can set the chromedriver path on the system path and remove this variable
-
+# Per scaricare il driver di Google Chrome, vai su https://chromedriver.chromium.org/downloads
+# Puoi impostare il percorso del driver di Chrome nella variabile di sistema PATH e rimuovere questa variabile
 CHROMEDRIVER_PATH = 'utils/linux/chromedriver' if sys.platform.startswith('linux') else 'utils/windows/chromedriver.exe'
 
+# Costanti utilizzate per l'identificazione dei componenti della pagina HTML di WhatsApp Web
 CONTACT_NAME_DIV = 'k8VZe'
 CONVERSATION_PANEL = '_2Ex_b'
 CONTACT_NAME = '_21S-L'
 USER_DATA_DIR = 'C:/user-data'
 
+# Inizializzazione dell'app Flask e della API RESTful
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
-
+# Definizione della classe per i messaggi quotati
 class MessageQuoted:
     autore = ""
     messaggio = ""
@@ -38,7 +40,7 @@ class MessageQuoted:
         self.messaggio = quote
         self.autore = quoteAuthor
 
-
+# Funzione di conversione di oggetti datetime in dizionari, per la serializzazione in JSON
 def json_default(value):
     if isinstance(value, datetime.date):
         return dict(year=value.year, month=value.month, day=value.day, hour=value.hour, minutes=value.minute)
@@ -52,7 +54,7 @@ def json_default(value):
     else:
         return value.__dict__
 
-
+# Definizione della classe per i messaggi
 class Message:
     text = ""
     day = ""
@@ -61,10 +63,12 @@ class Message:
     quote = MessageQuoted
     date = datetime.datetime.now()
 
+    # Metodo per la conversione di oggetti Message in dizionari, per la serializzazione in JSON
     def __dict__(self):
         return json.dumps(self, default=json_default,
                           sort_keys=True, indent=4)
 
+    # Metodo per la visualizzazione del messaggio in console
     def display(self):
         if self.quote.autore != "":
             print("[%s, %s]  %s %s -'%s: %s' " % (
@@ -76,6 +80,7 @@ class Message:
             print("[%s, %s]  %s %s " % (
                 self.day, self.time, self.person, self.text))
         return 0
+    # Funzione per ottenere il messaggio come stringa
 
     def asString(self):
         if self.quote.autore != "":
@@ -106,28 +111,37 @@ class Message:
 
 
 def manageHtml(soup):
+    """
+    Extracts messages from a BeautifulSoup object and returns them as a SortedSet of Message objects.
+    """
     messages = SortedSet()
     messagesInDiv = soup.findAll('div', attrs={'class': re.compile(r"message-*")})
     lastDay = ""
     lastTime = ""
     for message in messagesInDiv:
+        # Find a div with a data-testid attribute of 'quoted-message' that contains a span with a class of 'quoted-mention'
         quotedDiv = message.find('div', attrs={'data-testid': 'quoted-message'})
         messaggioQuotato = ""
         autoreQuote = ""
+        # If there is a quoted message, extract its text and author
         if (quotedDiv):
             quotedElem = quotedDiv.find('span', attrs={'class': 'quoted-mention'})
             if (quotedElem):
                 messaggioQuotato = quotedElem.text
             autoreQuote = quotedDiv.text.replace(messaggioQuotato, '')
+        # Find the message element with a data-pre-plain-text attribute
         elemento = message.find('div', attrs={'data-pre-plain-text': True})
 
         if (elemento):
             elem = elemento.attrs['data-pre-plain-text']
+            # Find the span element with class 'selectable-text' or 'copyable-text' that contains the message text
             e = message.find('span', attrs={'class': ['selectable-text', 'copyable-text']})
             if e:
+                # Extract the message text, day, time, author, quoted message and quoted author
                 m = Message(e.text, elem.split(", ")[1].split("]")[0],
                             elem.split(", ")[0].split("[")[1],
                             elem.split(", ")[1].split("]")[1], messaggioQuotato, autoreQuote)
+                # Convert the day and time to a datetime object and set it as the message date
                 lastDay = m.day
                 lastTime = m.time
                 m.date = datetime.datetime(int(m.day.split("/")[2]), int(m.day.split("/")[1]),
@@ -135,6 +149,7 @@ def manageHtml(soup):
                                            int(m.time.split(":")[0]), int(m.time.split(":")[1]))
                 messages.add(m)
             else:
+                # If the message is an image or other media, set the message
                 m = Message("", elem.split(", ")[1].split("]")[0],
                             elem.split(", ")[0].split("[")[1],
                             elem.split(", ")[1].split("]")[1], messaggioQuotato, autoreQuote)
